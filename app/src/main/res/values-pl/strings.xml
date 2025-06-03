@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GamifyLife</string> <!-- Or Polish app name if desired, but often kept same -->
+    <string name="app_name">GamifyLife</string>
 
     <string name="navigation_drawer_open">Otwórz menu nawigacji</string>
     <string name="navigation_drawer_close">Zamknij menu nawigacji</string>
@@ -9,9 +9,9 @@
     <string name="action_settings">Ustawienia</string>
 
     <string name="menu_home">Dom</string>
-    <string name="menu_gallery">Galeria</string>
+    <string name="menu_settings">Ustawienia</string> <!-- Zmienione z menu_gallery -->
     <string name="menu_slideshow">Prezentacje</string>
-    <string name="title_activity_main">GamifyLife Strona Główna</string> <!-- Polish translation -->
+    <string name="title_activity_main">GamifyLife Strona Główna</string>
 
     <!-- Login Screen -->
     <string name="login_title">Logowanie</string>
@@ -53,20 +53,17 @@
     <string name="main_logout_button">Wyloguj</string>
     <string name="main_logged_out">Wylogowano</string>
 
-    <!-- Add more strings as needed for your app -->
     <string name="achievements_title">Osiągnięcia</string>
     <string name="create_task_button">Stwórz Nowe Osiągnięcie</string>
 
-    <!-- values-pl/strings.xml -->
     <string name="select_language_title">Wybierz język</string>
     <string name="cancel_button_text">Anuluj</string>
     <string name="menu_change_language">Zmień język</string>
     <string name="themes_coming_soon">Wybór motywów już wkrótce!</string>
 
-    <!-- ... other strings ... -->
     <string name="menu_themes">Motywy</string>
     <string name="menu_logout">Wyloguj</string>
-    <string name="menu_notifications">Ustawienia powiadomień</string> <!-- Example -->
+    <string name="menu_notifications">Ustawienia powiadomień</string>
     <string name="language_english">Angielski</string>
     <string name="language_polish">Polski</string>
 
@@ -136,10 +133,8 @@
     <string name="failed_to_complete_achievement">Nie udało się ukończyć osiągnięcia. Spróbuj ponownie.</string>
 
     <string name="saving_button_text">Zapisywanie…</string>
-
     <string name="hint_icon_selection">Wybierz Ikonę</string>
     <string name="hint_xp_value">Wartość PD (1–100)</string>
-
 
     <string name="title_cannot_be_empty">Tytuł nie może być pusty</string>
     <string name="please_select_icon">Proszę wybrać ikonę</string>
@@ -149,20 +144,18 @@
     <string name="please_select_target_date">Proszę wybrać datę docelową</string>
     <string name="select_date_prompt_initial">Wybierz Datę</string>
 
-    <string name="profile_not_found_placeholder">test</string> <!-- Test Name -->
+    <string name="profile_not_found_placeholder">test</string>
 
-    <string name="admob_banner_ad_unit_id_test_or_real">ca-app-pub-3940256099942544/6300978111</string> <!-- Test ID -->
-    <string name="error_loading_achievement_failed">Nie udalo się wczytać osiągnięcia.</string>
-    <string name="achievement_not_found_for_editing">Nie odnaleziono osiągnięcia do edycji.</string>
+    <string name="error_loading_achievement_failed">Nie udało się wczytać danych osiągnięcia.</string>
+    <string name="achievement_not_found_for_editing">Nie znaleziono osiągnięcia do edycji.</string>
     <string name="user_not_logged_in_error">Użytkownik nie jest zalogowany.</string>
     <string name="error_loading_data_no_user_id">Nie udało się wczytać danych użytkownika.</string>
-    <string name="error_invalid_xp_for_completion">Błąd XP dla ukończenia osiągnięcia.</string>
-    <string name="uncompleting_not_implemented_toast">Nie wprowadzono anulowania ukończenia.</string>
-    <string name="clicked_details_toast">Kliknięto details.</string>
-    <string name="gallery_not_implemented_toast">gallery_not_implemented_toast.</string>
-    <string name="slideshow_not_implemented_toast">slideshow_not_implemented_toast.</string>
+    <string name="error_invalid_xp_for_completion">Nieprawidłowa wartość PD dla ukończenia.</string>
+    <string name="uncompleting_not_implemented_toast">Cofanie ukończenia niezaimplementowane.</string>
+    <string name="clicked_details_toast">Kliknięto szczegóły.</string>
+    <string name="gallery_not_implemented_toast">Funkcja galerii już wkrótce!</string>
+    <string name="slideshow_not_implemented_toast">Funkcja pokazu slajdów już wkrótce!</string>
 
-    <string name="menu_settings">Ustawienia</string>
     <string name="settings_category_general">Ogólne</string>
     <string name="settings_category_notifications">Powiadomienia</string>
     <string name="settings_configure_notifications">Skonfiguruj codzienne przypomnienia</string>
@@ -173,4 +166,48 @@
     <string name="default_notification_time">09:00</string>
     <string name="notification_settings_saved">Ustawienia przypomnień zapisane.</string>
     <string name="error_saving_notification_settings">Błąd zapisu ustawień.</string>
+
+    <string name="setting_notification_sound_title">Dźwięk i Wibracje</string> <!-- & nie wymaga & w polskim -->
+    <string name="setting_notification_sound">Dźwięk powiadomienia</string>
+    <string name="setting_notification_vibrate">Wibracje</string>
+    <string name="sound_default">Domyślny</string>
+    <string name="sound_silent">Cichy</string>
+    <!-- Klucze pref_notification_sound_uri_key i pref_notification_vibrate_key nie są tłumaczone, więc nie ma ich tutaj -->
+    <string name="setting_reset_all_settings">Zresetuj wszystkie ustawienia</string>
+    <string name="dialog_reset_settings_title">Zresetować ustawienia?</string>
+    <string name="dialog_reset_settings_message">Spowoduje to przywrócenie domyślnych ustawień języka, motywu i powiadomień. Tej akcji nie można cofnąć.</string>
+    <string name="reset_button_text">Resetuj</string>
+    <string name="settings_reset_toast">Ustawienia zostały zresetowane. Uruchom ponownie aplikację.</string>
+    <string name="exact_alarm_permission_needed">Aby zaplanować precyzyjne przypomnienia, nadaj aplikacji GamifyLife uprawnienie "Alarmy i przypomnienia" w ustawieniach telefonu.</string>
+    <string name="exact_alarm_permission_missing_error">Nie można ustawić przypomnienia. Może brakować uprawnienia do dokładnych alarmów.</string>
+    <string name="notification_single_task_reminder_detail">Nie zapomnij o: %1$s!</string>
+    <string name="notification_multiple_tasks_reminder">Masz %1$d oczekujących zadań na dziś. Sprawdź je!</string>
+    <string name="notification_general_reminder">Czas zgrywalizować swoje życie! Sprawdź swoje cele.</string>
+    <string name="exact_alarm_permission_needed_dialog_message">Aby włączyć precyzyjne przypomnienia, aplikacja GamifyLife potrzebuje uprawnienia "Alarmy i przypomnienia". Możesz je nadać w ustawieniach telefonu.</string>
+    <string name="exact_alarm_permission_title">Precyzyjne przypomnienia</string>
+    <string name="go_to_settings_button">Przejdź do ustawień</string>
+    <string name="exact_alarm_permission_needed_redirect">Precyzyjne przypomnienia wymagają specjalnego pozwolenia. Przekierowuję do ustawień...</string>
+    <string name="admob_banner_ad_unit_id_test_or_real">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="admob_interstitial_ad_unit_id_test_or_real">ca-app-pub-3940256099942544/1033173712</string> <!-- Dodane dla testu, jeśli go używasz -->
+
+    <string name="menu_export_pdf">Wyeksportuj PDF</string>
+
+    <string name="home_chart_title">Tygodniowe Osiągnięcia</string>
+    <string name="home_chart_legend_completed">Ukończone Osiągnięcia</string>
+    <string name="no_chart_data_available">Brak danych o aktywności z ostatniego tygodnia.</string>
+    <string name="log_in_to_see_chart">Zaloguj się, aby zobaczyć wykres aktywności.</string>
+    <string name="error_loading_chart_data">Błąd ładowania danych wykresu.</string>
+    <string name="na_placeholder">B/D</string> <!-- Brak Danych -->
+    <string name="nickname_cannot_be_empty">Nick nie może być pusty.</string>
+    <string name="user_not_signed_in">Użytkownik niezalogowany.</string>
+    <string name="marker_achievements_completed">Ukończono: %d</string>
+
+    <!-- Stringi dla wyboru motywu -->
+    <string name="theme_light">Jasny</string>
+    <string name="theme_dark">Ciemny</string>
+    <string name="theme_system_default">Domyślny systemowy</string>
+    <string name="select_theme_title">Wybierz motyw</string>
+
+    <!-- Upewnij się, że masz też string dla menu, jeśli go używasz -->
+    <string name="menu_change_theme">Zmień motyw</string>
 </resources>

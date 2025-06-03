@@ -1,24 +1,37 @@
-package com.example.gamifylife; // lub twój pakiet dla aktywności
+package com.example.gamifylife;
 
+import android.Manifest;
+import android.app.AlarmManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.preference.PreferenceManager; // Jeśli używasz androidx.preference
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
-import com.google.android.material.materialswitch.MaterialSwitch; // Poprawny import
+import com.example.gamifylife.notifications.NotificationScheduler;
+import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.util.Calendar;
 import java.util.HashSet;
@@ -27,27 +40,77 @@ import java.util.Set;
 
 public class NotificationSettingsActivity extends BaseActivity {
 
+    private static final String TAG = "NotificationSettings";
+
     public static final String PREF_NOTIFICATIONS_ENABLED = "pref_notifications_enabled";
     public static final String PREF_NOTIFICATION_HOUR = "pref_notification_hour";
     public static final String PREF_NOTIFICATION_MINUTE = "pref_notification_minute";
-    public static final String PREF_NOTIFICATION_DAYS = "pref_notification_days"; // Set<String>
+    public static final String PREF_NOTIFICATION_DAYS = "pref_notification_days";
+    public static final String PREF_NOTIFICATION_SOUND_URI = "pref_notification_sound_uri";
+    public static final String PREF_NOTIFICATION_VIBRATE = "pref_notification_vibrate";
 
     private MaterialSwitch switchEnableNotifications;
     private LinearLayout layoutNotificationTime;
     private TextView textViewNotificationTimeValue;
     private Button buttonSaveSettings;
+    private LinearLayout layoutNotificationSound;
+    private TextView textViewNotificationSoundValue;
+    private MaterialSwitch switchNotificationVibrate;
+    private LinearLayout actualLayoutCheckboxesDays;
 
-    private CheckBox cbMon, cbTue, cbWed, cbThu, cbFri, cbSat, cbSun;
+    private CheckBox cbSun, cbMon, cbTue, cbWed, cbThu, cbFri, cbSat; // Zmieniona kolejność dla łatwiejszego mapowania
     private CheckBox[] dayCheckBoxes;
 
-
+    private Uri selectedSoundUri;
     private SharedPreferences prefs;
     private int selectedHour, selectedMinute;
+
+    private ActivityResultLauncher<String> requestPostNotificationsPermissionLauncher;
+    private ActivityResultLauncher<Intent> requestExactAlarmSettingsLauncher;
+
+    private final ActivityResultLauncher<Intent> ringtonePickerLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Uri uri = result.getData().getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+                    selectedSoundUri = uri;
+                    updateNotificationSoundDisplay();
+                    Log.d(TAG, "Ringtone selected: " + (selectedSoundUri != null ? selectedSoundUri.toString() : "Silent"));
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification_settings);
+        Log.d(TAG, "onCreate started");
+
+        requestPostNotificationsPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+            Log.d(TAG, "POST_NOTIFICATIONS permission result: " + isGranted);
+            if (isGranted) {
+                if (switchEnableNotifications.isChecked()) {
+                    savePreferencesAndAttemptSchedule(true); // Spróbuj zapisać i zaplanować po przyznaniu
+                }
+            } else {
+                Toast.makeText(this, "Reminders cannot be shown without notification permission.", Toast.LENGTH_LONG).show();
+                if (switchEnableNotifications.isChecked()) {
+                    switchEnableNotifications.setChecked(false);
+                    prefs.edit().putBoolean(PREF_NOTIFICATIONS_ENABLED, false).apply();
+                    NotificationScheduler.scheduleOrCancelNotifications(this);
+                }
+            }
+        });
+
+        requestExactAlarmSettingsLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    Log.d(TAG, "Returned from exact alarm settings screen. Attempting to save/schedule again.");
+                    // Niezależnie od result, savePreferencesAndAttemptSchedule sprawdzi uprawnienia ponownie
+                    // Wywołaj to tylko, jeśli switch był zaznaczony, aby uniknąć niepotrzebnego zapisu
+                    if (switchEnableNotifications.isChecked()) {
+                        savePreferencesAndAttemptSchedule(true); // true - bo użytkownik próbował włączyć/zapisać
+                    }
+                }
+        );
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -61,115 +124,281 @@ public class NotificationSettingsActivity extends BaseActivity {
         layoutNotificationTime = findViewById(R.id.layoutNotificationTime);
         textViewNotificationTimeValue = findViewById(R.id.textViewNotificationTimeValue);
         buttonSaveSettings = findViewById(R.id.buttonSaveNotificationSettings);
+        layoutNotificationSound = findViewById(R.id.layoutNotificationSound);
+        textViewNotificationSoundValue = findViewById(R.id.textViewNotificationSoundValue);
+        switchNotificationVibrate = findViewById(R.id.switchNotificationVibrate);
+        actualLayoutCheckboxesDays = findViewById(R.id.idlayoutCheckboxesDays);
 
+        // Kolejność w XML: Sun, Mon, Tue, Wed, Thu, Fri, Sat
+        // Calendar.DAY_OF_WEEK: SUNDAY = 1, MONDAY = 2, ..., SATURDAY = 7
+        cbSun = findViewById(R.id.checkboxDaySun);
         cbMon = findViewById(R.id.checkboxDayMon);
         cbTue = findViewById(R.id.checkboxDayTue);
         cbWed = findViewById(R.id.checkboxDayWed);
         cbThu = findViewById(R.id.checkboxDayThu);
         cbFri = findViewById(R.id.checkboxDayFri);
         cbSat = findViewById(R.id.checkboxDaySat);
-        cbSun = findViewById(R.id.checkboxDaySun);
-        dayCheckBoxes = new CheckBox[]{cbSun, cbMon, cbTue, cbWed, cbThu, cbFri, cbSat}; // Kolejność Calendar.DAY_OF_WEEK
+        dayCheckBoxes = new CheckBox[]{cbSun, cbMon, cbTue, cbWed, cbThu, cbFri, cbSat}; // Indeks 0=Niedz, 1=Pon...
 
         loadSettings();
-        updateNotificationTimeState(); // Update visibility based on switch
+        Log.d(TAG, "Settings loaded in onCreate");
 
         switchEnableNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            updateNotificationTimeState();
+            Log.d(TAG, "switchEnableNotifications changed, isChecked: " + isChecked);
+            updateNotificationOptionsState();
+            if (isChecked) {
+                checkAndRequestPostNotificationPermission(); // To zainicjuje kaskadę sprawdzania uprawnień
+            } else {
+                // Jeśli użytkownik wyłącza, zapisz i anuluj od razu
+                savePreferencesAndAttemptSchedule(false);
+            }
         });
 
-        layoutNotificationTime.setOnClickListener(v -> showTimePickerDialog());
-        textViewNotificationTimeValue.setOnClickListener(v -> showTimePickerDialog()); // Allow clicking text too
-
-        buttonSaveSettings.setOnClickListener(v -> saveSettingsAndSchedule());
+        layoutNotificationTime.setOnClickListener(v -> { if (switchEnableNotifications.isChecked()) showTimePickerDialog(); });
+        textViewNotificationTimeValue.setOnClickListener(v -> { if (switchEnableNotifications.isChecked()) showTimePickerDialog(); });
+        layoutNotificationSound.setOnClickListener(v -> { if (switchEnableNotifications.isChecked()) openRingtonePicker(); });
+        buttonSaveSettings.setOnClickListener(v -> savePreferencesAndAttemptSchedule(true)); // true - bo to akcja zapisu
+        Log.d(TAG, "onCreate finished");
     }
 
-    private void updateNotificationTimeState() {
-        boolean enabled = switchEnableNotifications.isChecked();
-        layoutNotificationTime.setEnabled(enabled);
-        textViewNotificationTimeValue.setEnabled(enabled);
-        for (CheckBox cb : dayCheckBoxes) {
-            cb.setEnabled(enabled);
-        }
-        // Można też zmienić alpha, aby wizualnie pokazać, że opcje są nieaktywne
-        float alpha = enabled ? 1.0f : 0.5f;
-        layoutNotificationTime.setAlpha(alpha);
-        findViewById(R.id.checkboxDayMon).getRootView().setAlpha(alpha); // Apply to parent of checkboxes
-    }
-
-
-    private void loadSettings() {
-        switchEnableNotifications.setChecked(prefs.getBoolean(PREF_NOTIFICATIONS_ENABLED, false));
-        selectedHour = prefs.getInt(PREF_NOTIFICATION_HOUR, 9); // Domyślnie 9
-        selectedMinute = prefs.getInt(PREF_NOTIFICATION_MINUTE, 0); // Domyślnie 00
-        updateNotificationTimeDisplay();
-
-        Set<String> selectedDaysPrefs = prefs.getStringSet(PREF_NOTIFICATION_DAYS, getDefaultSelectedDays());
-        for (int i = 0; i < dayCheckBoxes.length; i++) {
-            // Calendar.SUNDAY = 1, MONDAY = 2, ..., SATURDAY = 7
-            // Nasza tablica dayCheckBoxes[0] to niedziela, dayCheckBoxes[1] to poniedziałek itd.
-            // Konwertujemy i+1 na string, aby pasowało do wartości Calendar.DAY_OF_WEEK
-            if (selectedDaysPrefs.contains(String.valueOf(i + 1))) {
-                dayCheckBoxes[i].setChecked(true);
+    private void checkAndRequestPostNotificationPermission() {
+        Log.d(TAG, "checkAndRequestPostNotificationPermission called");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "POST_NOTIFICATIONS permission NOT granted. Requesting...");
+                requestPostNotificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            } else {
+                Log.d(TAG, "POST_NOTIFICATIONS permission ALREADY granted.");
+                // Jeśli to uprawnienie jest, a switch jest włączony, możemy przejść do sprawdzania SCHEDULE_EXACT_ALARM
+                // To się stanie w savePreferencesAndAttemptSchedule
             }
         }
     }
 
-    private Set<String> getDefaultSelectedDays() {
-        // Domyślnie zaznacz wszystkie dni
-        Set<String> defaultDays = new HashSet<>();
-        for (int i = 1; i <= 7; i++) { // Od Calendar.SUNDAY do Calendar.SATURDAY
-            defaultDays.add(String.valueOf(i));
-        }
-        return defaultDays;
-    }
-
-
-    private void updateNotificationTimeDisplay() {
-        textViewNotificationTimeValue.setText(String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute));
-    }
-
-    private void showTimePickerDialog() {
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this,
-                (view, hourOfDay, minute) -> {
-                    selectedHour = hourOfDay;
-                    selectedMinute = minute;
-                    updateNotificationTimeDisplay();
-                }, selectedHour, selectedMinute, true); // true dla formatu 24-godzinnego
-        timePickerDialog.show();
-    }
-
-    private void saveSettingsAndSchedule() {
+    // Dodano parametr `isSavingExplicitly`, aby odróżnić automatyczne wywołania od kliknięcia "Save"
+    private void savePreferencesAndAttemptSchedule(boolean isSavingExplicitly) {
+        Log.d(TAG, "savePreferencesAndAttemptSchedule called. isSavingExplicitly: " + isSavingExplicitly);
         SharedPreferences.Editor editor = prefs.edit();
-        boolean enabled = switchEnableNotifications.isChecked();
-        editor.putBoolean(PREF_NOTIFICATIONS_ENABLED, enabled);
+        boolean intendedEnableState = switchEnableNotifications.isChecked();
+        boolean finalCanEnable = intendedEnableState;
+        Log.d(TAG, "Initial intendedEnableState: " + intendedEnableState);
+
+        // 1. Sprawdź POST_NOTIFICATIONS
+        if (intendedEnableState && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                Log.w(TAG, "POST_NOTIFICATIONS permission still not granted. Disabling reminders.");
+                finalCanEnable = false;
+                // Jeśli to nie jest jawny zapis, a switch był włączony, odznacz go
+                if (!isSavingExplicitly && switchEnableNotifications.isChecked()) {
+                    switchEnableNotifications.setChecked(false);
+                }
+            }
+        }
+
+        // 2. Sprawdź SCHEDULE_EXACT_ALARM - tylko jeśli nadal chcemy włączyć
+        if (finalCanEnable && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            if (alarmManager != null && !alarmManager.canScheduleExactAlarms()) {
+                Log.w(TAG, "SCHEDULE_EXACT_ALARM permission not granted.");
+                if (intendedEnableState) { // Pokaż dialog tylko, jeśli użytkownik aktywnie próbuje włączyć
+                    Log.d(TAG, "Showing SCHEDULE_EXACT_ALARM permission dialog.");
+                    new AlertDialog.Builder(this)
+                            .setTitle(getString(R.string.exact_alarm_permission_title))
+                            .setMessage(getString(R.string.exact_alarm_permission_needed_dialog_message))
+                            .setPositiveButton(getString(R.string.go_to_settings_button), (dialog, which) -> {
+                                Log.d(TAG, "User clicked 'Go to Settings' for exact alarms.");
+                                try {
+                                    Intent intentSettings = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                                    requestExactAlarmSettingsLauncher.launch(intentSettings);
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Could not open exact alarm settings from dialog", e);
+                                    Toast.makeText(this, getString(R.string.exact_alarm_permission_needed), Toast.LENGTH_LONG).show();
+                                }
+                            })
+                            .setNegativeButton(android.R.string.cancel, (dialog, which) -> {
+                                Log.d(TAG, "User cancelled exact alarm permission dialog.");
+                                Toast.makeText(NotificationSettingsActivity.this, "Precise reminders disabled as permission was not granted.", Toast.LENGTH_SHORT).show();
+                                if (switchEnableNotifications.isChecked()) {
+                                    switchEnableNotifications.setChecked(false);
+                                    // Zapisz stan natychmiast, bo użytkownik podjął decyzję
+                                    prefs.edit().putBoolean(PREF_NOTIFICATIONS_ENABLED, false).apply();
+                                    NotificationScheduler.scheduleOrCancelNotifications(NotificationSettingsActivity.this);
+                                }
+                            })
+                            .setCancelable(false)
+                            .show();
+                    return; // Czekaj na interakcję użytkownika
+                }
+                finalCanEnable = false; // Nie można włączyć bez tego uprawnienia
+            } else if (alarmManager == null) {
+                Log.e(TAG, "AlarmManager is null, cannot check canScheduleExactAlarms. Disabling reminders.");
+                finalCanEnable = false;
+            }
+        }
+
+        // Ostatecznie zaktualizuj UI switcha, jeśli logika uprawnień go zmieniła
+        if (switchEnableNotifications.isChecked() != finalCanEnable) {
+            Log.d(TAG, "Switch state (" + switchEnableNotifications.isChecked() + ") differs from finalCanEnable (" + finalCanEnable + "). Updating switch.");
+            switchEnableNotifications.setChecked(finalCanEnable);
+        }
+
+        Log.d(TAG, "Saving preferences. Final PREF_NOTIFICATIONS_ENABLED: " + finalCanEnable);
+        editor.putBoolean(PREF_NOTIFICATIONS_ENABLED, finalCanEnable);
         editor.putInt(PREF_NOTIFICATION_HOUR, selectedHour);
         editor.putInt(PREF_NOTIFICATION_MINUTE, selectedMinute);
-
         Set<String> daysToSave = new HashSet<>();
         for (int i = 0; i < dayCheckBoxes.length; i++) {
             if (dayCheckBoxes[i].isChecked()) {
-                daysToSave.add(String.valueOf(i + 1)); // Calendar.DAY_OF_WEEK values
+                // dayCheckBoxes[0] to Niedziela (Calendar.SUNDAY = 1)
+                // dayCheckBoxes[1] to Poniedziałek (Calendar.MONDAY = 2) ...
+                daysToSave.add(String.valueOf(i + 1));
             }
         }
+        Log.d(TAG, "Saving days: " + daysToSave);
         editor.putStringSet(PREF_NOTIFICATION_DAYS, daysToSave);
 
+        if (selectedSoundUri != null) {
+            editor.putString(PREF_NOTIFICATION_SOUND_URI, selectedSoundUri.toString());
+        } else {
+            editor.putString(PREF_NOTIFICATION_SOUND_URI, "silent");
+        }
+        editor.putBoolean(PREF_NOTIFICATION_VIBRATE, switchNotificationVibrate.isChecked());
         editor.apply();
 
-        if (enabled) {
-            // Tutaj wywołaj metodę planującą powiadomienia z AlarmManager
-            // NotificationScheduler.scheduleNotifications(this); // Stworzymy tę klasę
-            Toast.makeText(this, R.string.notification_settings_saved, Toast.LENGTH_SHORT).show();
-            // Na razie tylko toast, scheduling w następnym kroku
-            Log.d("NotificationSettings", "Scheduling would happen here for " + selectedHour + ":" + selectedMinute + " on days: " + daysToSave);
-            //com.example.gamifylife.notifications.NotificationScheduler.scheduleOrCancelNotifications(this); // Odwołanie do NotificationScheduler
-        } else {
-            // Tutaj wywołaj metodę anulującą powiadomienia
-            // NotificationScheduler.cancelNotifications(this);
-            Toast.makeText(this, getString(R.string.notification_settings_saved) + " (Reminders disabled)", Toast.LENGTH_SHORT).show();
-            //com.example.gamifylife.notifications.NotificationScheduler.scheduleOrCancelNotifications(this); // Odwołanie do NotificationScheduler
+        if (isSavingExplicitly) { // Pokaż toast tylko przy jawnym zapisie
+            if (finalCanEnable) {
+                Toast.makeText(this, R.string.notification_settings_saved, Toast.LENGTH_SHORT).show();
+            } else {
+                // Jeśli finalCanEnable jest false, ale intendedEnableState było true,
+                // oznacza to, że uprawnienia przeszkodziły. Toast o tym był już pokazany.
+                if (!intendedEnableState) { // Użytkownik sam wyłączył
+                    Toast.makeText(this, getString(R.string.notification_settings_saved) + " (Reminders disabled)", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
-        finish(); // Wróć do SettingsFragment
+        Log.d(TAG, "Calling NotificationScheduler.scheduleOrCancelNotifications.");
+        NotificationScheduler.scheduleOrCancelNotifications(this);
+    }
+
+    private void updateNotificationOptionsState() {
+        boolean enabled = switchEnableNotifications.isChecked();
+        Log.d(TAG, "updateNotificationOptionsState, enabled: " + enabled);
+        layoutNotificationTime.setEnabled(enabled);
+        textViewNotificationTimeValue.setEnabled(enabled);
+        layoutNotificationSound.setEnabled(enabled);
+        textViewNotificationSoundValue.setEnabled(enabled);
+        switchNotificationVibrate.setEnabled(enabled);
+
+        for (CheckBox cb : dayCheckBoxes) {
+            cb.setEnabled(enabled);
+        }
+
+        float alpha = enabled ? 1.0f : 0.5f;
+        layoutNotificationTime.setAlpha(alpha);
+        layoutNotificationSound.setAlpha(alpha);
+        switchNotificationVibrate.setAlpha(alpha);
+        if (actualLayoutCheckboxesDays != null) {
+            actualLayoutCheckboxesDays.setAlpha(alpha);
+        } else {
+            Log.w(TAG, "actualLayoutCheckboxesDays is null in updateNotificationOptionsState");
+        }
+    }
+
+    private void loadSettings() {
+        Log.d(TAG, "loadSettings started");
+        switchEnableNotifications.setChecked(prefs.getBoolean(PREF_NOTIFICATIONS_ENABLED, false));
+        selectedHour = prefs.getInt(PREF_NOTIFICATION_HOUR, 9);
+        selectedMinute = prefs.getInt(PREF_NOTIFICATION_MINUTE, 0);
+        updateNotificationTimeDisplay();
+
+        Set<String> selectedDaysPrefs = prefs.getStringSet(PREF_NOTIFICATION_DAYS, getDefaultSelectedDays());
+        Log.d(TAG, "Loaded days from prefs: " + selectedDaysPrefs);
+        for (int i = 0; i < dayCheckBoxes.length; i++) {
+            if (dayCheckBoxes[i] != null) {
+                // Indeks i w dayCheckBoxes (0-6) odpowiada Calendar.DAY_OF_WEEK - 1 (0=Niedz, 1=Pon...)
+                // Wartość w selectedDaysPrefs to String.valueOf(Calendar.DAY_OF_WEEK) (1-7)
+                dayCheckBoxes[i].setChecked(selectedDaysPrefs.contains(String.valueOf(i + 1)));
+            }
+        }
+        loadSoundSettings();
+        updateNotificationOptionsState(); // Ważne, aby było po załadowaniu wszystkiego
+        Log.d(TAG, "loadSettings finished. Initial switch state: " + switchEnableNotifications.isChecked());
+    }
+
+    private Set<String> getDefaultSelectedDays() {
+        Set<String> defaultDays = new HashSet<>();
+        for (int i = 1; i <= 7; i++) { // Calendar.SUNDAY to Calendar.SATURDAY
+            defaultDays.add(String.valueOf(i));
+        }
+        Log.d(TAG, "getDefaultSelectedDays: " + defaultDays);
+        return defaultDays;
+    }
+
+    private void updateNotificationTimeDisplay() {
+        if (textViewNotificationTimeValue != null) {
+            textViewNotificationTimeValue.setText(String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute));
+        }
+    }
+
+    private void showTimePickerDialog() {
+        Log.d(TAG, "showTimePickerDialog called");
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this,
+                (view, hourOfDay, minute) -> {
+                    Log.d(TAG, "Time picked: " + hourOfDay + ":" + minute);
+                    selectedHour = hourOfDay;
+                    selectedMinute = minute;
+                    updateNotificationTimeDisplay();
+                }, selectedHour, selectedMinute, true);
+        timePickerDialog.show();
+    }
+
+    private void loadSoundSettings() {
+        Log.d(TAG, "loadSoundSettings started");
+        String soundUriString = prefs.getString(PREF_NOTIFICATION_SOUND_URI, null);
+        if (soundUriString != null) {
+            if (soundUriString.equals("silent")) {
+                selectedSoundUri = null;
+            } else {
+                selectedSoundUri = Uri.parse(soundUriString);
+            }
+        } else {
+            selectedSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        }
+        if (switchNotificationVibrate != null) {
+            switchNotificationVibrate.setChecked(prefs.getBoolean(PREF_NOTIFICATION_VIBRATE, true));
+        }
+        updateNotificationSoundDisplay();
+        Log.d(TAG, "loadSoundSettings finished. Sound: " + (selectedSoundUri != null ? selectedSoundUri.toString() : "Silent") + ", Vibrate: " + switchNotificationVibrate.isChecked());
+    }
+
+    private void updateNotificationSoundDisplay() {
+        if (textViewNotificationSoundValue == null) return;
+        if (selectedSoundUri != null) {
+            Ringtone ringtone = RingtoneManager.getRingtone(this, selectedSoundUri);
+            if (ringtone != null) {
+                textViewNotificationSoundValue.setText(ringtone.getTitle(this));
+            } else {
+                textViewNotificationSoundValue.setText(getString(R.string.sound_default));
+                selectedSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                Ringtone defaultRingtone = RingtoneManager.getRingtone(this, selectedSoundUri);
+                if (defaultRingtone != null) {
+                    textViewNotificationSoundValue.setText(defaultRingtone.getTitle(this));
+                }
+            }
+        } else {
+            textViewNotificationSoundValue.setText(getString(R.string.sound_silent));
+        }
+    }
+
+    private void openRingtonePicker() {
+        Log.d(TAG, "openRingtonePicker called");
+        Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, selectedSoundUri);
+        ringtonePickerLauncher.launch(intent);
     }
 
     @Override

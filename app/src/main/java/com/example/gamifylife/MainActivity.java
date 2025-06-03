@@ -153,9 +153,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         } else if (itemId == R.id.nav_settings) {
             selectedFragment = new SettingsFragment();
             title = getString(R.string.menu_settings);
-        } else if (itemId == R.id.nav_slideshow) {
+        /*} else if (itemId == R.id.nav_slideshow) {
             title = getString(R.string.menu_slideshow);
-            Toast.makeText(this, getString(R.string.slideshow_not_implemented_toast), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.slideshow_not_implemented_toast), Toast.LENGTH_SHORT).show();*/
         }
 
         if (selectedFragment != null) {

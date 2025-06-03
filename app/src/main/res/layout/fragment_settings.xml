@@ -55,5 +55,19 @@
             style="?attr/materialButtonOutlinedStyle"
             android:layout_marginBottom="8dp"/>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"/>
+
+        <Button
+            android:id="@+id/buttonResetSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_reset_all_settings"
+            style="?attr/materialButtonOutlinedStyle"
+            android:textColor="?attr/colorError" />
     </LinearLayout>
 </ScrollView>

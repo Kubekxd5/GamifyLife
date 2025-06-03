@@ -5,13 +5,13 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
-import android.preference.PreferenceManager; // Or androidx.preference.PreferenceManager if you use AndroidX Preference library
+import androidx.preference.PreferenceManager;
 
 import java.util.Locale;
 
 public class LocaleHelper {
 
-    private static final String SELECTED_LANGUAGE_KEY = "Locale.Helper.Selected.Language";
+    public static final String SELECTED_LANGUAGE_KEY = "Locale.Helper.Selected.Language";
 
     // Call this from your Application's attachBaseContext or BaseActivity's attachBaseContext
     public static Context onAttach(Context context) {
@@ -38,18 +38,17 @@ public class LocaleHelper {
     }
 
     private static String getPersistedLocale(Context context, String defaultLanguage) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context); // Użyj androidx
         return preferences.getString(SELECTED_LANGUAGE_KEY, defaultLanguage);
     }
+
     private static String getPersistedLocale(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        // Fallback to device default if no preference is set
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context); // Użyj androidx
         return preferences.getString(SELECTED_LANGUAGE_KEY, Locale.getDefault().getLanguage());
     }
 
-
     private static void persist(Context context, String languageCode) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context); // Użyj androidx
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(SELECTED_LANGUAGE_KEY, languageCode);
         editor.apply();

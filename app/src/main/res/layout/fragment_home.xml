@@ -1,137 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:fillViewport="true"
     tools:context=".HomeFragment">
 
-    <!-- All the profile UI elements go here -->
-    <TextView
-        android:id="@+id/textViewNickname"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        tools:text="UserNickname123"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/buttonEditNickname"
-        app:layout_constraintHorizontal_bias="0.0"
-        android:layout_marginEnd="8dp"/>
+        android:padding="16dp">
 
-    <ImageButton
-        android:id="@+id/buttonEditNickname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_edit"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/edit_nickname_description"
-        app:layout_constraintTop_toTopOf="@id/textViewNickname"
-        app:layout_constraintBottom_toBottomOf="@id/textViewNickname"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <!-- Elementy profilu użytkownika -->
+        <TextView
+            android:id="@+id/textViewNickname"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:textAppearance="?attr/textAppearanceHeadlineSmall"
+            app:layout_constraintEnd_toStartOf="@+id/buttonEditNickname"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="UserNickname123" />
 
-    <TextView
-        android:id="@+id/textViewLevelLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/level_label"
-        app:layout_constraintTop_toBottomOf="@id/textViewNickname"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="16dp"/>
+        <ImageButton
+            android:id="@+id/buttonEditNickname"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/edit_nickname_description"
+            android:src="@drawable/ic_edit"
+            app:layout_constraintBottom_toBottomOf="@id/textViewNickname"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/textViewNickname" />
 
-    <TextView
-        android:id="@+id/textViewLevelValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="15"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintStart_toEndOf="@id/textViewLevelLabel"
-        app:layout_constraintTop_toTopOf="@id/textViewLevelLabel"
-        app:layout_constraintBottom_toBottomOf="@id/textViewLevelLabel"
-        android:layout_marginStart="8dp"/>
+        <TextView
+            android:id="@+id/textViewLevelLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/level_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewNickname" />
 
-    <ProgressBar
-        android:id="@+id/progressBarXP"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/textViewLevelLabel"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"
-        tools:progress="60"
-        android:max="100"/>
+        <TextView
+            android:id="@+id/textViewLevelValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            app:layout_constraintBottom_toBottomOf="@id/textViewLevelLabel"
+            app:layout_constraintStart_toEndOf="@id/textViewLevelLabel"
+            app:layout_constraintTop_toTopOf="@id/textViewLevelLabel"
+            tools:text="15" />
 
-    <TextView
-        android:id="@+id/textViewXPCurrent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="60 XP"
-        app:layout_constraintStart_toStartOf="@id/progressBarXP"
-        app:layout_constraintTop_toBottomOf="@id/progressBarXP"/>
+        <ProgressBar
+            android:id="@+id/progressBarXP"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:max="100"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewLevelLabel"
+            tools:progress="60" />
 
-    <TextView
-        android:id="@+id/textViewXPTotalForLevel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="/ 100 XP to next"
-        app:layout_constraintEnd_toEndOf="@id/progressBarXP"
-        app:layout_constraintTop_toBottomOf="@id/progressBarXP"/>
+        <TextView
+            android:id="@+id/textViewXPCurrent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/progressBarXP"
+            app:layout_constraintTop_toBottomOf="@id/progressBarXP"
+            tools:text="60 XP" />
 
-    <TextView
-        android:id="@+id/textViewAchievementsCompletedLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/achievements_completed_label"
-        app:layout_constraintTop_toBottomOf="@id/textViewXPCurrent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="16dp"/>
+        <TextView
+            android:id="@+id/textViewXPTotalForLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@id/progressBarXP"
+            app:layout_constraintTop_toBottomOf="@id/progressBarXP"
+            tools:text="/ 100 XP to next" />
 
-    <TextView
-        android:id="@+id/textViewAchievementsCompletedValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="25"
-        app:layout_constraintStart_toEndOf="@id/textViewAchievementsCompletedLabel"
-        app:layout_constraintTop_toTopOf="@id/textViewAchievementsCompletedLabel"
-        app:layout_constraintBottom_toBottomOf="@id/textViewAchievementsCompletedLabel"
-        android:layout_marginStart="8dp"/>
+        <TextView
+            android:id="@+id/textViewAchievementsCompletedLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/achievements_completed_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewXPCurrent" />
 
-    <TextView
-        android:id="@+id/textViewAccountCreatedLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/account_created_label"
-        app:layout_constraintTop_toBottomOf="@id/textViewAchievementsCompletedLabel"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="8dp"/>
+        <TextView
+            android:id="@+id/textViewAchievementsCompletedValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@id/textViewAchievementsCompletedLabel"
+            app:layout_constraintStart_toEndOf="@id/textViewAchievementsCompletedLabel"
+            app:layout_constraintTop_toTopOf="@id/textViewAchievementsCompletedLabel"
+            tools:text="25" />
 
-    <TextView
-        android:id="@+id/textViewAccountCreatedValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="Jan 01, 2023"
-        app:layout_constraintStart_toEndOf="@id/textViewAccountCreatedLabel"
-        app:layout_constraintTop_toTopOf="@id/textViewAccountCreatedLabel"
-        app:layout_constraintBottom_toBottomOf="@id/textViewAccountCreatedLabel"
-        android:layout_marginStart="8dp"/>
+        <TextView
+            android:id="@+id/textViewAccountCreatedLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/account_created_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewAchievementsCompletedLabel" />
 
-    <!-- ProgressBar for loading indication within this fragment -->
-    <ProgressBar
-        android:id="@+id/progressBarHome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <TextView
+            android:id="@+id/textViewAccountCreatedValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@id/textViewAccountCreatedLabel"
+            app:layout_constraintStart_toEndOf="@id/textViewAccountCreatedLabel"
+            app:layout_constraintTop_toTopOf="@id/textViewAccountCreatedLabel"
+            tools:text="Jan 01, 2023" />
 
-    <!-- Removed the ButtonViewAchievements and ButtonLogout from here,
-         as those are typically part of MainActivity or specific fragments,
-         not the general Home profile display.
-         ButtonViewAchievements makes sense in AchievementsFragment.
-         ButtonLogout is in nav_header_main and options menu. -->
+        <ProgressBar
+            android:id="@+id/progressBarHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- SEKCJA WYKRESU -->
+        <TextView
+            android:id="@+id/textViewChartTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/home_chart_title"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewAccountCreatedValue" />
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/achievementsChart"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewChartTitle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintVertical_bias="0.0"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

@@ -23,6 +23,7 @@ activity = "1.9.0" # Zaktualizowano do jednej z nowszych (sprawdź najnowszą)
 # firebaseStorage - wersja zarządzana przez BoM
 glideCompiler = "4.16.0"
 glide = "4.16.0"
+mpandroidchart = "v3.1.0" # Najnowsza stabilna wersja, sprawdź na GitHub
 
 [libraries]
 # Glide
@@ -57,6 +58,9 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth" } # Bezp
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" } # Bezpośrednia wersja usunięta, BoM zarządza
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage" } # Bezpośrednia wersja usunięta, BoM zarządza
 firebase-appcheck-playintegrity = { group = "com.google.firebase", name = "firebase-appcheck-playintegrity" } # BoM zarządza
+
+# Github
+mpandroidchart = { group = "com.github.PhilJay", name = "MPAndroidChart", version.ref = "mpandroidchart" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

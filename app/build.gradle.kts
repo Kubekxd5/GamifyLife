@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId = "com.example.gamifylife"
         minSdk = 24
-        targetSdk = 35 // <<--- ZAKTUALIZOWANO do compileSdk
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -71,6 +71,9 @@ dependencies {
     implementation(libs.firebase.firestore)     // Cloud Firestore (wersja zarządzana przez BoM)
     implementation(libs.firebase.storage)       // Firebase Storage (wersja zarządzana przez BoM)
     implementation(libs.firebase.appcheck.playintegrity) // Firebase App Check (wersja zarządzana przez BoM)
+
+    // Github
+    implementation(libs.mpandroidchart)
 
     // Jeśli masz inne biblioteki, dodaj je tutaj
 }

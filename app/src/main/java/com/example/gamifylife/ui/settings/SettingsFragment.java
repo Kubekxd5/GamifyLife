@@ -1,7 +1,9 @@
 package com.example.gamifylife.ui.settings; // lub com.example.gamifylife.ui
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +13,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import com.example.gamifylife.NotificationSettingsActivity;
 import com.example.gamifylife.R;
 import com.example.gamifylife.helpers.LocaleHelper;
 import com.example.gamifylife.helpers.ThemeHelper;
+
+import java.util.Locale;
 
 public class SettingsFragment extends Fragment {
 
@@ -51,6 +56,9 @@ public class SettingsFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        Button buttonResetSettings = view.findViewById(R.id.buttonResetSettings);
+        buttonResetSettings.setOnClickListener(v -> showResetSettingsConfirmationDialog());
     }
 
     private void showLanguageSelectionDialog() {
@@ -120,5 +128,68 @@ public class SettingsFragment extends Fragment {
         });
         builder.setNegativeButton(getString(R.string.cancel_button_text), (dialog, which) -> dialog.dismiss());
         builder.show();
+    }
+
+    private void showResetSettingsConfirmationDialog() {
+        if (getContext() == null || getActivity() == null) return;
+
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.dialog_reset_settings_title)
+                .setMessage(R.string.dialog_reset_settings_message)
+                .setPositiveButton(R.string.reset_button_text, (dialog, which) -> {
+                    resetAppSettings();
+                })
+                .setNegativeButton(R.string.cancel_button_text, null)
+                .show();
+    }
+
+    private void resetAppSettings() {
+        if (getContext() == null || getActivity() == null) return;
+
+        // Resetuj SharedPreferences
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor = preferences.edit();
+
+        // Klucze do zresetowania (musisz je zebrać ze wszystkich miejsc, gdzie zapisujesz preferencje)
+        // Język
+        editor.remove(LocaleHelper.SELECTED_LANGUAGE_KEY); // Upewnij się, że klucz jest publiczny w LocaleHelper lub masz metodę reset
+        // Motyw
+        editor.remove(ThemeHelper.PREF_KEY_THEME); // Upewnij się, że klucz jest publiczny w ThemeHelper lub masz metodę reset
+        // Powiadomienia
+        editor.remove(NotificationSettingsActivity.PREF_NOTIFICATIONS_ENABLED);
+        editor.remove(NotificationSettingsActivity.PREF_NOTIFICATION_HOUR);
+        editor.remove(NotificationSettingsActivity.PREF_NOTIFICATION_MINUTE);
+        editor.remove(NotificationSettingsActivity.PREF_NOTIFICATION_DAYS);
+        editor.remove(NotificationSettingsActivity.PREF_NOTIFICATION_SOUND_URI);
+        editor.remove(NotificationSettingsActivity.PREF_NOTIFICATION_VIBRATE);
+        // Dodaj inne klucze, jeśli są
+
+        editor.apply();
+
+        // Zastosuj domyślne ustawienia (opcjonalnie, ale dobre dla natychmiastowego efektu przed restartem)
+        // Język - systemowy (LocaleHelper.onAttach zrobi to przy restarcie, ale można wymusić)
+        LocaleHelper.setLocale(getContext(), Locale.getDefault().getLanguage()); // Ustaw na systemowy
+
+        // Motyw - systemowy
+        ThemeHelper.setThemePreference(getContext(), ThemeHelper.THEME_SYSTEM_DEFAULT);
+        ThemeHelper.applyTheme(ThemeHelper.THEME_SYSTEM_DEFAULT);
+
+
+        // Anuluj zaplanowane powiadomienia (gdy NotificationScheduler będzie gotowy)
+        // com.example.gamifylife.notifications.NotificationScheduler.cancelAllNotifications(getContext());
+        Log.d("SettingsFragment", "All notifications cancelling would happen here.");
+
+
+        Toast.makeText(getContext(), R.string.settings_reset_toast, Toast.LENGTH_LONG).show();
+
+        // Wymuś restart aplikacji, aby wszystkie zmiany (zwłaszcza język) zostały poprawnie załadowane
+        // To jest "brutalny" restart, ale najprostszy do zapewnienia spójności
+        Intent i = getActivity().getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage(getActivity().getBaseContext().getPackageName());
+        if (i != null) {
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+            getActivity().finishAffinity(); // Zamknij wszystkie aktywności bieżącej aplikacji
+        }
     }
 }

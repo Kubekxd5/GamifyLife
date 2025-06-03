@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-</androidx.preference.PreferenceScreen>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Udostępnij pliki z katalogu podręcznego aplikacji -->
+    <cache-path name="shared_pdfs" path="pdfs/" />
+    <!-- Możesz też dodać <files-path ... /> jeśli zapisujesz w getFilesDir() -->
+</paths>
