@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".HomeFragment">
+
+    <!-- All the profile UI elements go here -->
+    <TextView
+        android:id="@+id/textViewNickname"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        tools:text="UserNickname123"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/buttonEditNickname"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginEnd="8dp"/>
+
+    <ImageButton
+        android:id="@+id/buttonEditNickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_edit"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/edit_nickname_description"
+        app:layout_constraintTop_toTopOf="@id/textViewNickname"
+        app:layout_constraintBottom_toBottomOf="@id/textViewNickname"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/textViewLevelLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/level_label"
+        app:layout_constraintTop_toBottomOf="@id/textViewNickname"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/textViewLevelValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="15"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintStart_toEndOf="@id/textViewLevelLabel"
+        app:layout_constraintTop_toTopOf="@id/textViewLevelLabel"
+        app:layout_constraintBottom_toBottomOf="@id/textViewLevelLabel"
+        android:layout_marginStart="8dp"/>
+
+    <ProgressBar
+        android:id="@+id/progressBarXP"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/textViewLevelLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        tools:progress="60"
+        android:max="100"/>
+
+    <TextView
+        android:id="@+id/textViewXPCurrent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="60 XP"
+        app:layout_constraintStart_toStartOf="@id/progressBarXP"
+        app:layout_constraintTop_toBottomOf="@id/progressBarXP"/>
+
+    <TextView
+        android:id="@+id/textViewXPTotalForLevel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="/ 100 XP to next"
+        app:layout_constraintEnd_toEndOf="@id/progressBarXP"
+        app:layout_constraintTop_toBottomOf="@id/progressBarXP"/>
+
+    <TextView
+        android:id="@+id/textViewAchievementsCompletedLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/achievements_completed_label"
+        app:layout_constraintTop_toBottomOf="@id/textViewXPCurrent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/textViewAchievementsCompletedValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="25"
+        app:layout_constraintStart_toEndOf="@id/textViewAchievementsCompletedLabel"
+        app:layout_constraintTop_toTopOf="@id/textViewAchievementsCompletedLabel"
+        app:layout_constraintBottom_toBottomOf="@id/textViewAchievementsCompletedLabel"
+        android:layout_marginStart="8dp"/>
+
+    <TextView
+        android:id="@+id/textViewAccountCreatedLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/account_created_label"
+        app:layout_constraintTop_toBottomOf="@id/textViewAchievementsCompletedLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/textViewAccountCreatedValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Jan 01, 2023"
+        app:layout_constraintStart_toEndOf="@id/textViewAccountCreatedLabel"
+        app:layout_constraintTop_toTopOf="@id/textViewAccountCreatedLabel"
+        app:layout_constraintBottom_toBottomOf="@id/textViewAccountCreatedLabel"
+        android:layout_marginStart="8dp"/>
+
+    <!-- ProgressBar for loading indication within this fragment -->
+    <ProgressBar
+        android:id="@+id/progressBarHome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Removed the ButtonViewAchievements and ButtonLogout from here,
+         as those are typically part of MainActivity or specific fragments,
+         not the general Home profile display.
+         ButtonViewAchievements makes sense in AchievementsFragment.
+         ButtonLogout is in nav_header_main and options menu. -->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

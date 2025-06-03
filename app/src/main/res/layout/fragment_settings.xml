@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.settings.SettingsFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_category_general"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/buttonChangeLanguage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/menu_change_language"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/buttonChangeTheme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/menu_themes"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_marginBottom="16dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_category_notifications"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/buttonNotificationSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_configure_notifications"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_marginBottom="8dp"/>
+
+    </LinearLayout>
+</ScrollView>

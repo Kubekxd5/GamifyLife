@@ -1,0 +1,67 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme (Light) -->
+    <style name="Base.Theme.GamifyLife" parent="Theme.Material3.DayNight.NoActionBar"> <!-- Or Theme.MaterialComponents.DayNight.NoActionBar if using Material 2 -->
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item> <!-- For Material 2, use colorPrimaryDark for Material 3 -->
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_700</item> <!-- For Material 2, use colorSecondaryDark for Material 3 -->
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+        <!-- Example: Background color -->
+        <item name="android:colorBackground">@color/light_background</item>
+        <item name="colorSurface">@color/light_surface</item>
+        <item name="colorOnBackground">@color/on_light_background</item>
+        <item name="colorOnSurface">@color/on_light_surface</item>
+        <item name="android:textColorPrimary">@color/on_light_background</item>
+    </style>
+
+    <style name="Theme.GamifyLife.NoActionBar" parent="Base.Theme.GamifyLife">
+        <!-- You can add specific overrides here if this theme needs to be
+             slightly different from your base NoActionBar theme for MainActivity.
+             Often, it can be identical to Base.Theme.GamifyLife if that's already NoActionBar.
+             For example, you might want to ensure certain window features are explicitly off. -->
+        <!--
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        -->
+        <!-- Ensure your primary/secondary colors are set or inherited correctly for the Toolbar -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- ... other color attributes if needed ... -->
+    </style>
+
+    <style name="Theme.GamifyLife" parent="Base.Theme.GamifyLife" />
+
+    <!-- Specific Theme for Light Mode -->
+    <style name="Theme.GamifyLife.Light" parent="Base.Theme.GamifyLife">
+        <!-- Override specific attributes for light theme if Base.Theme.GamifyLife isn't already purely light -->
+        <!-- This is often the same as Base.Theme.GamifyLife if DayNight isn't strictly enforced by it -->
+    </style>
+
+    <!-- Specific Theme for Dark Mode (can also be defined here for clarity or if not using -night folder) -->
+    <style name="Theme.GamifyLife.Dark" parent="Theme.Material3.DayNight.NoActionBar"> <!-- Or Theme.MaterialComponents.DayNight.NoActionBar -->
+        <item name="colorPrimary">@color/purple_200</item> <!-- Lighter primary for dark theme -->
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_200</item> <!-- Can be same as colorSecondary in dark -->
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+
+        <item name="android:colorBackground">@color/dark_background</item>
+        <item name="colorSurface">@color/dark_surface</item>
+        <item name="colorOnBackground">@color/on_dark_background</item>
+        <item name="colorOnSurface">@color/on_dark_surface</item>
+        <item name="android:textColorPrimary">@color/on_dark_background</item>
+    </style>
+
+    <!-- For MainActivity Toolbar Overlays (if needed) -->
+    <style name="Theme.GamifyLife.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.GamifyLife.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+</resources>

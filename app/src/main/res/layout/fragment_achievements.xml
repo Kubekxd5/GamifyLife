@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AchievementsFragment">
+
+    <CalendarView
+        android:id="@+id/calendarViewAchievements"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewAchievements"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/calendarViewAchievements"
+        android:layout_above="@+id/fabAddAchievement"
+        android:padding="8dp"
+        android:clipToPadding="false"/>
+
+    <TextView
+        android:id="@+id/textViewEmptyAchievements"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_achievements_for_date"
+    android:textSize="18sp"
+    android:layout_centerInParent="true"
+    android:visibility="gone" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddAchievement"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_add"
+        android:contentDescription="@string/create_new_achievement_fab_cd"
+        app:tint="@android:color/white"/>
+
+</RelativeLayout>

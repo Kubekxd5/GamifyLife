@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".NotificationSettingsActivity">
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/switchEnableNotifications"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/setting_enable_daily_reminders"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:layout_marginBottom="16dp"/>
+
+    <LinearLayout
+        android:id="@+id/layoutNotificationTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/setting_notification_time"
+            android:textAppearance="?attr/textAppearanceListItem"/>
+
+        <TextView
+            android:id="@+id/textViewNotificationTimeValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="09:00"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?attr/colorPrimary"/>
+    </LinearLayout>
+
+    <!-- Tutaj można dodać wybór dni tygodnia (np. grupa CheckBoxów) -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/setting_notification_days"
+        android:textAppearance="?attr/textAppearanceLabelMedium"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="7">
+        <CheckBox android:id="@+id/checkboxDayMon" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="M"/>
+        <CheckBox android:id="@+id/checkboxDayTue" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="T"/>
+        <CheckBox android:id="@+id/checkboxDayWed" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="W"/>
+        <CheckBox android:id="@+id/checkboxDayThu" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="T"/>
+        <CheckBox android:id="@+id/checkboxDayFri" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="F"/>
+        <CheckBox android:id="@+id/checkboxDaySat" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="S"/>
+        <CheckBox android:id="@+id/checkboxDaySun" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="S"/>
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/buttonSaveNotificationSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save_button"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="24dp"/>
+
+</LinearLayout>

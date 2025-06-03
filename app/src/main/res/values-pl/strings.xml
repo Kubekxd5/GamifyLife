@@ -1,0 +1,176 @@
+<resources>
+    <string name="app_name">GamifyLife</string> <!-- Or Polish app name if desired, but often kept same -->
+
+    <string name="navigation_drawer_open">Otwórz menu nawigacji</string>
+    <string name="navigation_drawer_close">Zamknij menu nawigacji</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Ustawienia</string>
+
+    <string name="menu_home">Dom</string>
+    <string name="menu_gallery">Galeria</string>
+    <string name="menu_slideshow">Prezentacje</string>
+    <string name="title_activity_main">GamifyLife Strona Główna</string> <!-- Polish translation -->
+
+    <!-- Login Screen -->
+    <string name="login_title">Logowanie</string>
+    <string name="login_email_hint">E-mail</string>
+    <string name="login_password_hint">Hasło</string>
+    <string name="login_button">Zaloguj</string>
+    <string name="login_forgot_password">Nie pamiętasz hasła?</string>
+    <string name="login_go_to_register">Nie masz konta? Zarejestruj się</string>
+    <string name="login_email_required">E-mail jest wymagany.</string>
+    <string name="login_invalid_email">Proszę podać poprawny e-mail.</string>
+    <string name="login_password_required">Hasło jest wymagane.</string>
+    <string name="login_successful">Logowanie udane.</string>
+    <string name="login_failed">Logowanie nie powiodło się: %1$s</string>
+    <string name="login_logging_in">Logowanie…</string>
+    <string name="Captcha_question">Pytanie captcha</string>
+
+
+    <!-- Register Screen -->
+    <string name="register_title">Rejestracja</string>
+    <string name="register_password_hint">Hasło (min. 6 znaków)</string>
+    <string name="register_confirm_password_hint">Potwierdź hasło</string>
+    <string name="register_button">Zarejestruj</string>
+    <string name="register_go_to_login">Masz już konto? Zaloguj się</string>
+    <string name="register_password_min_length">Hasło musi mieć co najmniej 6 znaków.</string>
+    <string name="register_passwords_do_not_match">Hasła nie pasują do siebie.</string>
+    <string name="register_successful">Rejestracja udana.</string>
+    <string name="register_failed">Rejestracja nie powiodła się: %1$s</string>
+    <string name="register_registering">Rejestrowanie…</string>
+
+    <!-- Forgot Password Dialog -->
+    <string name="forgot_password_title">Zapomniałeś hasła</string>
+    <string name="forgot_password_email_hint">Podaj swój zarejestrowany e-mail</string>
+    <string name="forgot_password_send_button">Wyślij e-mail resetujący</string>
+    <string name="forgot_password_email_sent">E-mail do resetowania hasła został wysłany.</string>
+    <string name="forgot_password_failed">Nie udało się wysłać e-maila resetującego: %1$s</string>
+
+    <!-- Main Activity -->
+    <string name="main_welcome_user">Zalogowano jako: %1$s</string>
+    <string name="main_logout_button">Wyloguj</string>
+    <string name="main_logged_out">Wylogowano</string>
+
+    <!-- Add more strings as needed for your app -->
+    <string name="achievements_title">Osiągnięcia</string>
+    <string name="create_task_button">Stwórz Nowe Osiągnięcie</string>
+
+    <!-- values-pl/strings.xml -->
+    <string name="select_language_title">Wybierz język</string>
+    <string name="cancel_button_text">Anuluj</string>
+    <string name="menu_change_language">Zmień język</string>
+    <string name="themes_coming_soon">Wybór motywów już wkrótce!</string>
+
+    <!-- ... other strings ... -->
+    <string name="menu_themes">Motywy</string>
+    <string name="menu_logout">Wyloguj</string>
+    <string name="menu_notifications">Ustawienia powiadomień</string> <!-- Example -->
+    <string name="language_english">Angielski</string>
+    <string name="language_polish">Polski</string>
+
+    <string name="widget_title_default">Osiągnięcia GamifyLife</string>
+    <string name="widget_content_default">Brak osiągnięć. Dodaj jakieś!</string>
+    <string name="widget_open_app">Otwórz aplikację</string>
+    <string name="gamifylife_widget_description">Pokazuje Twoje osiągnięcia GamifyLife.</string>
+    <string name="widget_title_dynamic">Twoje Osiągnięcia</string>
+    <string name="widget_content_example">%d aktywnych osiągnięć</string>
+
+    <string name="create_achievement_title">Nowe Osiągnięcie</string>
+    <string name="hint_achievement_title">Tytuł (np. Przeczytaj książkę)</string>
+    <string name="hint_achievement_description">Opis (opcjonalnie)</string>
+    <string name="button_select_image">Wybierz obrazek</string>
+    <string name="button_save_achievement">Zapisz Osiągnięcie</string>
+    <string name="cd_achievement_image_preview">Podgląd obrazka osiągnięcia</string>
+    <string name="achievement_saved_successfully">Osiągnięcie zapisane!</string>
+    <string name="achievement_save_failed">Nie udało się zapisać osiągnięcia.</string>
+    <string name="uploading_image">Przesyłanie obrazka…</string>
+    <string name="error_title_required">Tytuł jest wymagany.</string>
+    <string name="error_image_required">Obrazek jest wymagany.</string>
+    <string name="permission_denied_read_storage">Odmówiono pozwolenia na odczyt pamięci.</string>
+    <string name="create_new_achievement_fab_cd">Utwórz nowe osiągnięcie</string>
+
+    <string name="label_select_icon">Wybierz ikonę:</string>
+    <string name="error_icon_required">Wybór ikony jest wymagany.</string>
+
+    <string name="icon_name_book">Książka</string>
+    <string name="icon_name_sport">Sport</string>
+    <string name="icon_name_code">Kodowanie</string>
+    <string name="icon_name_default">Domyślna</string>
+
+    <string name="menu_achievements">Moje Osiągnięcia</string>
+    <string name="title_achievements_fragment">Osiągnięcia</string>
+
+    <string name="no_achievements_yet">Brak osiągnięć. Naciśnij \'+\', aby dodać pierwsze!</string>
+    <string name="label_target_date">Data Docelowa:</string>
+    <string name="hint_select_target_date">Wybierz datę dla tego osiągnięcia</string>
+    <string name="button_select_date">Wybierz Datę</string>
+    <string name="error_date_required">Data docelowa jest wymagana.</string>
+    <string name="no_achievements_for_date">Brak osiągnięć na ten dzień.</string>
+    <string name="please_log_in">Zaloguj się by zobaczyć osiągnięcia.</string>
+    <string name="error_loading_achievements">Błąd wczytywania osiągnięć.</string>
+    <string name="failed_to_update_status">Nie udało się zaktualizować statusu.</string>
+    <string name="edit_achievement_button_cd">Edytuj osiągnięcie</string>
+
+    <string name="edit_achievement_title">Edytuj Osiągnięcie</string>
+    <string name="button_update_achievement">Aktualizuj Osiągnięcie</string>
+    <string name="achievement_updated_successfully">Osiągnięcie zaktualizowane!</string>
+    <string name="achievement_update_failed">Nie udało się zaktualizować osiągnięcia.</string>
+    <string name="loading_achievement_details">Ładowanie szczegółów…</string>
+
+    <string name="level_label">Poziom:</string>
+    <string name="achievements_completed_label">Ukończone Osiągnięcia:</string>
+    <string name="account_created_label">Dołączono:</string>
+    <string name="edit_nickname_description">Edytuj Nick</string>
+    <string name="dialog_edit_nickname_title">Zmień Nick</string>
+    <string name="nickname_hint">Wpisz nowy nick</string>
+    <string name="save_button">Zapisz</string>
+    <string name="nickname_updated">Nick zaktualizowany</string>
+    <string name="nickname_update_failed">Nie udało się zaktualizować nicku</string>
+    <string name="view_achievements_button">Zobacz Moje Osiągnięcia</string>
+    <string name="xp_format">%1$d PD</string>
+    <string name="xp_slash_total_format">/ %1$d PD do nast.</string>
+
+    <string name="achievement_completed_toast">Osiągnięcie ukończone! +%1$d PD</string>
+    <string name="failed_to_complete_achievement">Nie udało się ukończyć osiągnięcia. Spróbuj ponownie.</string>
+
+    <string name="saving_button_text">Zapisywanie…</string>
+
+    <string name="hint_icon_selection">Wybierz Ikonę</string>
+    <string name="hint_xp_value">Wartość PD (1–100)</string>
+
+
+    <string name="title_cannot_be_empty">Tytuł nie może być pusty</string>
+    <string name="please_select_icon">Proszę wybrać ikonę</string>
+    <string name="xp_cannot_be_empty">Wartość PD nie może być pusta</string>
+    <string name="error_invalid_xp">Nieprawidłowa wartość PD (musi być liczbą)</string>
+    <string name="error_xp_out_of_range">PD musi być między 1 a 100</string>
+    <string name="please_select_target_date">Proszę wybrać datę docelową</string>
+    <string name="select_date_prompt_initial">Wybierz Datę</string>
+
+    <string name="profile_not_found_placeholder">test</string> <!-- Test Name -->
+
+    <string name="admob_banner_ad_unit_id_test_or_real">ca-app-pub-3940256099942544/6300978111</string> <!-- Test ID -->
+    <string name="error_loading_achievement_failed">Nie udalo się wczytać osiągnięcia.</string>
+    <string name="achievement_not_found_for_editing">Nie odnaleziono osiągnięcia do edycji.</string>
+    <string name="user_not_logged_in_error">Użytkownik nie jest zalogowany.</string>
+    <string name="error_loading_data_no_user_id">Nie udało się wczytać danych użytkownika.</string>
+    <string name="error_invalid_xp_for_completion">Błąd XP dla ukończenia osiągnięcia.</string>
+    <string name="uncompleting_not_implemented_toast">Nie wprowadzono anulowania ukończenia.</string>
+    <string name="clicked_details_toast">Kliknięto details.</string>
+    <string name="gallery_not_implemented_toast">gallery_not_implemented_toast.</string>
+    <string name="slideshow_not_implemented_toast">slideshow_not_implemented_toast.</string>
+
+    <string name="menu_settings">Ustawienia</string>
+    <string name="settings_category_general">Ogólne</string>
+    <string name="settings_category_notifications">Powiadomienia</string>
+    <string name="settings_configure_notifications">Skonfiguruj codzienne przypomnienia</string>
+    <string name="title_activity_notification_settings">Ustawienia Przypomnień</string>
+    <string name="setting_enable_daily_reminders">Włącz codzienne przypomnienia</string>
+    <string name="setting_notification_time">Godzina przypomnienia</string>
+    <string name="setting_notification_days">Dni przypomnień</string>
+    <string name="default_notification_time">09:00</string>
+    <string name="notification_settings_saved">Ustawienia przypomnień zapisane.</string>
+    <string name="error_saving_notification_settings">Błąd zapisu ustawień.</string>
+</resources>
