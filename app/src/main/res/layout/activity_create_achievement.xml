@@ -12,32 +12,29 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/create_achievement_title"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            android:layout_marginBottom="16dp"/>
-
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:hint="@string/hint_achievement_title"
+            style="?attr/textInputOutlinedStyle">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editTextAchievementTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_achievement_title"
                 android:inputType="textCapSentences" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutXp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:hint="@string/hint_xp_value">  <!-- Add string: "XP Value (1-100)" -->
+            android:layout_marginBottom="12dp"
+            android:hint="@string/hint_xp_value"
+            style="?attr/textInputOutlinedStyle">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editTextAchievementXp"
@@ -47,25 +44,50 @@
                 android:maxLength="3"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_target_date"
+            android:textAppearance="?attr/textAppearanceLabelLarge"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/textViewTargetDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:padding="12dp"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:background="?attr/editTextBackground"
+        android:hint="@string/hint_select_target_date"
+        android:layout_marginBottom="12dp"
+        android:clickable="true"
+        android:focusable="true"/>
+
         <Button
             android:id="@+id/buttonSelectTargetDate"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/button_select_date"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="24dp"/>
+            android:layout_gravity="start"
+            android:layout_marginBottom="16dp"/>
+
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:hint="@string/hint_achievement_description"
+            style="?attr/textInputOutlinedStyle">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editTextAchievementDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_achievement_description"
                 android:inputType="textMultiLine|textCapSentences"
                 android:minLines="3"
                 android:gravity="top"/>
@@ -75,38 +97,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/label_select_icon"
+            android:textAppearance="?attr/textAppearanceLabelLarge"
             android:layout_marginBottom="4dp"/>
 
         <Spinner
             android:id="@+id/spinnerAchievementIcon"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp" />
-        <!-- Możesz też dodać ImageView obok Spinnera do podglądu wybranej ikony -->
+            android:layout_height="48dp"
+        android:layout_marginBottom="8dp" />
+
         <ImageView
             android:id="@+id/imageViewSelectedIconPreview"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="24dp"
             tools:srcCompat="@drawable/ic_achievement_default"/>
+        <!-- Usunięto android:background="@color/white" - tło powinno być z motywu lub przezroczyste -->
 
-        <!-- NOWA SEKCJA WYBORU DATY -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/label_target_date"
-            android:layout_marginTop="16dp"/>
-
-        <TextView
-            android:id="@+id/textViewTargetDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:textSize="16sp"
-            android:background="?attr/editTextBackground"
-            android:hint="@string/hint_select_target_date"
-            android:layout_marginBottom="4dp"/>
 
         <ProgressBar
             android:id="@+id/progressBarCreateAchievement"
@@ -121,6 +129,7 @@
             android:id="@+id/buttonSaveAchievement"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="?attr/materialButtonStyle"
             android:text="@string/button_save_achievement" />
 
     </LinearLayout>

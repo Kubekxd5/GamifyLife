@@ -96,8 +96,21 @@ public class SettingsFragment extends Fragment {
     private void showThemeSelectionDialog() {
         if (getContext() == null || getActivity() == null) return;
 
-        final String[] themesDisplay = {getString(R.string.theme_light), getString(R.string.theme_dark), getString(R.string.theme_system_default)};
-        final String[] themeValues = {ThemeHelper.THEME_LIGHT, ThemeHelper.THEME_DARK, ThemeHelper.THEME_SYSTEM_DEFAULT};
+        // Zaktualizowane nazwy i wartości
+        final String[] themesDisplay = {
+                getString(R.string.theme_light),
+                getString(R.string.theme_dark_violet),
+                getString(R.string.theme_dark_orange),
+                getString(R.string.theme_hackerman),
+                getString(R.string.theme_system_default)
+        };
+        final String[] themeValues = {
+                ThemeHelper.THEME_LIGHT,
+                ThemeHelper.THEME_DARK_VIOLET,
+                ThemeHelper.THEME_DARK_ORANGE,
+                ThemeHelper.THEME_HACKERMAN,
+                ThemeHelper.THEME_SYSTEM_DEFAULT
+        };
 
         String currentTheme = ThemeHelper.getThemePreference(getContext());
         int checkedItem = -1;

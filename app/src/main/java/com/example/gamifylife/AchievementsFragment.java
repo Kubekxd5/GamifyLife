@@ -2,68 +2,61 @@ package com.example.gamifylife;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.FileProvider;
+import androidx.core.view.MenuProvider;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.gamifylife.models.Achievement;
 import com.example.gamifylife.models.UserProfile;
 import com.example.gamifylife.util.LevelUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import android.graphics.pdf.PdfDocument;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Typeface;
-import android.text.Layout;
-import android.text.StaticLayout;
-import android.text.TextPaint;
-import android.os.Environment; // Dla sprawdzania stanu pamięci, ale ostrożnie z zapisem bezpośrednim
-import androidx.core.content.FileProvider;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.List; // Upewnij się, że jest
-import com.google.firebase.firestore.Query; // Jeśli potrzebujesz Query.Direction
-
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import androidx.core.view.MenuProvider; // Dla nowoczesnej obsługi menu we fragmentach
-import androidx.lifecycle.Lifecycle;
-
-import com.example.gamifylife.AchievementAdapter;
-import com.example.gamifylife.models.Achievement;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class AchievementsFragment extends Fragment {
@@ -110,32 +103,34 @@ public class AchievementsFragment extends Fragment {
             @SuppressLint("StringFormatInvalid")
             @Override
             public void onAchievementClick(Achievement achievement) {
-                Toast.makeText(getContext(), getString(R.string.clicked_details_toast, achievement.getTitle()), Toast.LENGTH_SHORT).show(); // Użyj string resource
+                if (getContext() == null || achievement == null) return;
+                String title = achievement.getTitle() != null ? achievement.getTitle() : "";
+                Toast.makeText(getContext(), getString(R.string.clicked_details_toast, title), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onAttemptCompleteAchievement(Achievement achievement, boolean isChecked) {
-                if (!isAdded() || getContext() == null) return; // Fragment nie jest już aktywny
+                if (!isAdded() || getContext() == null || achievement == null) return;
 
                 if (isChecked && !achievement.isCompleted()) {
                     Log.d(TAG, "Fragment: Attempting to complete: " + achievement.getTitle() + " with XP: " + achievement.getXpValue());
                     if (achievement.getXpValue() <= 0) {
                         Log.e(TAG, "Critical: xpValue is " + achievement.getXpValue() + " for achievement. Cannot add XP.");
-                        Toast.makeText(getContext(), getString(R.string.error_invalid_xp_for_completion), Toast.LENGTH_LONG).show(); // Dodaj string
+                        Toast.makeText(getContext(), getString(R.string.error_invalid_xp_for_completion), Toast.LENGTH_LONG).show();
                         revertCheckBoxState(achievement.getDocumentId(), false);
                         return;
                     }
                     completeAchievementWithProfileUpdate(achievement);
                 } else if (!isChecked && achievement.isCompleted()) {
                     Log.d(TAG, "Fragment: Attempting to UN-complete: " + achievement.getTitle());
-                    Toast.makeText(getContext(), getString(R.string.uncompleting_not_implemented_toast), Toast.LENGTH_SHORT).show(); // Dodaj string
+                    Toast.makeText(getContext(), getString(R.string.uncompleting_not_implemented_toast), Toast.LENGTH_SHORT).show();
                     revertCheckBoxState(achievement.getDocumentId(), true);
                 }
             }
 
             @Override
             public void onEditAchievementClick(Achievement achievement) {
-                if (!isAdded() || getActivity() == null) return;
+                if (!isAdded() || getActivity() == null || achievement == null) return;
 
                 Log.d(TAG, "Edit clicked for: " + achievement.getTitle());
                 Intent intent = new Intent(getActivity(), CreateAchievementActivity.class);
@@ -143,12 +138,19 @@ public class AchievementsFragment extends Fragment {
                 intent.putExtra("ACHIEVEMENT_ID", achievement.getDocumentId());
                 intent.putExtra("ACHIEVEMENT_TITLE", achievement.getTitle());
                 intent.putExtra("ACHIEVEMENT_DESC", achievement.getDescription());
-                intent.putExtra("ACHIEVEMENT_ICON_NAME", achievement.getIconName()); // Zgodnie z modelem
+                intent.putExtra("ACHIEVEMENT_ICON_NAME", achievement.getIconName());
                 if (achievement.getTargetDate() != null) {
                     intent.putExtra("ACHIEVEMENT_TARGET_DATE", achievement.getTargetDate().getTime());
                 }
                 intent.putExtra("ACHIEVEMENT_XP", achievement.getXpValue());
                 startActivity(intent);
+            }
+
+            @Override
+            public void onDeleteAchievementClick(Achievement achievement, int position) {
+                if (!isAdded() || getContext() == null || achievement == null) return;
+                Log.d(TAG, "Delete clicked for: " + achievement.getTitle() + " at position " + position);
+                showDeleteConfirmationDialog(achievement, position);
             }
         });
 
@@ -161,21 +163,25 @@ public class AchievementsFragment extends Fragment {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         selectedDate = cal.getTime();
-        calendarView.setDate(selectedDate.getTime(), false, true);
+        if (calendarView != null) {
+            calendarView.setDate(selectedDate.getTime(), false, true);
+        }
 
         loadAchievementsForDate(selectedDate);
 
-        calendarView.setOnDateChangeListener((cv, year, month, dayOfMonth) -> {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(year, month, dayOfMonth);
-            calendar.set(Calendar.HOUR_OF_DAY, 0);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-            selectedDate = calendar.getTime();
-            Log.d(TAG, "Calendar date selected: " + selectedDate);
-            loadAchievementsForDate(selectedDate);
-        });
+        if (calendarView != null) {
+            calendarView.setOnDateChangeListener((cv, year, month, dayOfMonth) -> {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(year, month, dayOfMonth);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                selectedDate = calendar.getTime();
+                Log.d(TAG, "Calendar date selected: " + selectedDate);
+                loadAchievementsForDate(selectedDate);
+            });
+        }
 
         fabAddAchievement.setOnClickListener(v -> {
             if (!isAdded() || getActivity() == null) return;
@@ -185,12 +191,11 @@ public class AchievementsFragment extends Fragment {
             }
             startActivity(intent);
         });
-
         setupMenu();
     }
 
     private void setupMenu() {
-        // Nowoczesny sposób dodawania menu do fragmentu
+        if (getActivity() == null) return;
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
@@ -210,195 +215,111 @@ public class AchievementsFragment extends Fragment {
     }
 
     private void exportAchievementsToPdf() {
-        // Tutaj będzie logika generowania i udostępniania PDF
-        // Na razie tylko Toast
-        if (getContext() != null) {
-            Toast.makeText(getContext(), "Exporting to PDF...", Toast.LENGTH_SHORT).show();
-            // Wywołaj metodę, którą zaraz stworzymy
-            generateAndSharePdf();
-        }
+        if (getContext() == null) { Log.w(TAG, "exportAchievementsToPdf: Context is null."); return; }
+        Toast.makeText(getContext(), getString(R.string.exporting_to_pdf_toast), Toast.LENGTH_SHORT).show();
+        generateAndSharePdf();
     }
 
     private void generateAndSharePdf() {
         Log.d(TAG, "generateAndSharePdf called");
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
-            Toast.makeText(getContext(), "User not logged in.", Toast.LENGTH_SHORT).show();
+        if (currentUser == null || getContext() == null) {
+            if(getContext() != null) Toast.makeText(getContext(), getString(R.string.user_not_logged_in_error), Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Pokaż jakiś wskaźnik ładowania, jeśli pobieranie zadań może chwilę potrwać
-        // ProgressBar progressBarPdf = view.findViewById(R.id.progressBarPdf); // Musiałbyś dodać do layoutu
-        // if (progressBarPdf != null) progressBarPdf.setVisibility(View.VISIBLE);
-
-        // Pobierz wszystkie osiągnięcia (lub tylko z wybranego zakresu, np. ukończone)
-        // Dla przykładu pobierzemy wszystkie, posortowane.
         db.collection("users").document(currentUser.getUid()).collection("achievements")
-                .orderBy("targetDate", Query.Direction.DESCENDING) // Lub createdAt
+                .orderBy("targetDate", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    // if (progressBarPdf != null) progressBarPdf.setVisibility(View.GONE);
+                    if (getContext() == null || !isAdded()) return;
                     if (queryDocumentSnapshots.isEmpty()) {
-                        Toast.makeText(getContext(), "No achievements to export.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getString(R.string.no_achievements_to_export), Toast.LENGTH_SHORT).show();
                         return;
                     }
-
-                    List<Achievement> achievementsToExport = queryDocumentSnapshots.toObjects(Achievement.class);
+                    List<Achievement> achievementsToExport = new ArrayList<>();
+                    for(QueryDocumentSnapshot doc : queryDocumentSnapshots){
+                        Achievement ach = doc.toObject(Achievement.class);
+                        ach.setDocumentId(doc.getId());
+                        achievementsToExport.add(ach);
+                    }
                     Log.d(TAG, "Fetched " + achievementsToExport.size() + " achievements to export.");
-
                     try {
                         File pdfFile = createPdfFile(achievementsToExport);
                         if (pdfFile != null) {
                             sharePdfFile(pdfFile);
                         } else {
-                            Toast.makeText(getContext(), "Failed to create PDF file.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), getString(R.string.failed_to_create_pdf), Toast.LENGTH_LONG).show();
                         }
                     } catch (IOException e) {
                         Log.e(TAG, "Error generating or sharing PDF", e);
-                        Toast.makeText(getContext(), "Error generating PDF: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), getString(R.string.error_generating_pdf, e.getMessage()), Toast.LENGTH_LONG).show();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    // if (progressBarPdf != null) progressBarPdf.setVisibility(View.GONE);
+                    if (getContext() == null || !isAdded()) return;
                     Log.e(TAG, "Error fetching achievements for PDF export", e);
-                    Toast.makeText(getContext(), "Error fetching achievements: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), getString(R.string.error_loading_achievements) + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 
     private File createPdfFile(List<Achievement> achievements) throws IOException {
-        if (getContext() == null) return null;
+        if (getContext() == null) { Log.e(TAG, "createPdfFile: Context is null."); return null; }
 
-        // Użyjemy PdfDocument z Android SDK
         PdfDocument document = new PdfDocument();
-        // Rozmiary strony (A4 w punktach, 1 cal = 72 punkty)
-        // A4: 210mm x 297mm => 8.27in x 11.69in => 595 x 842 punktów
-        int pageWidth = 595;
-        int pageHeight = 842;
-        int margin = 40; // Marginesy w punktach
-        int contentWidth = pageWidth - 2 * margin;
-
-        // Ustawienia tekstu
-        TextPaint titlePaint = new TextPaint();
-        titlePaint.setColor(Color.BLACK);
-        titlePaint.setTextSize(18);
-        titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-
-        TextPaint textPaint = new TextPaint();
-        textPaint.setColor(Color.DKGRAY);
-        textPaint.setTextSize(12);
-
-        TextPaint smallTextPaint = new TextPaint();
-        smallTextPaint.setColor(Color.GRAY);
-        smallTextPaint.setTextSize(10);
-
+        int pageWidth = 595; int pageHeight = 842; int margin = 40; int contentWidth = pageWidth - 2 * margin;
+        TextPaint titlePaint = new TextPaint(); titlePaint.setColor(Color.BLACK); titlePaint.setTextSize(18); titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        TextPaint textPaint = new TextPaint(); textPaint.setColor(Color.DKGRAY); textPaint.setTextSize(12);
+        TextPaint smallTextPaint = new TextPaint(); smallTextPaint.setColor(Color.GRAY); smallTextPaint.setTextSize(10);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-
-        // --- Rysowanie na stronie ---
         PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
         PdfDocument.Page page = document.startPage(pageInfo);
-        Canvas canvas = page.getCanvas();
-
-        int yPosition = margin; // Aktualna pozycja Y na stronie
-
-        // Tytuł dokumentu
-        canvas.drawText("My Achievements - GamifyLife", margin, yPosition, titlePaint);
-        yPosition += 40;
+        Canvas canvas = page.getCanvas(); int yPosition = margin;
+        canvas.drawText(getString(R.string.pdf_title_my_achievements), margin, yPosition, titlePaint); yPosition += 40;
 
         for (Achievement achievement : achievements) {
-            if (yPosition > pageHeight - margin - 80) { // Sprawdź, czy jest miejsce na następny wpis (zapas 80pt)
-                document.finishPage(page); // Zakończ bieżącą stronę
+            if (yPosition > pageHeight - margin - 80) { // Check space for next entry
+                document.finishPage(page);
                 pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, document.getPages().size() + 1).create();
-                page = document.startPage(pageInfo); // Rozpocznij nową stronę
-                canvas = page.getCanvas();
-                yPosition = margin; // Zresetuj Y
-                // Można tu dodać nagłówek na nowych stronach
-                canvas.drawText("My Achievements (cont.)", margin, yPosition, titlePaint);
-                yPosition += 40;
+                page = document.startPage(pageInfo); canvas = page.getCanvas(); yPosition = margin;
+                canvas.drawText(getString(R.string.pdf_title_my_achievements_cont), margin, yPosition, titlePaint); yPosition += 40;
             }
-
-            // Tytuł osiągnięcia
-            canvas.drawText(achievement.getTitle(), margin, yPosition, textPaint);
-            yPosition += 20;
-
-            // Opis (z obsługą wielu linii)
+            canvas.drawText(achievement.getTitle(), margin, yPosition, textPaint); yPosition += 20;
             if (achievement.getDescription() != null && !achievement.getDescription().isEmpty()) {
                 StaticLayout descriptionLayout = StaticLayout.Builder.obtain(achievement.getDescription(), 0, achievement.getDescription().length(), textPaint, contentWidth)
-                        .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-                        .setLineSpacing(0, 1.0f)
-                        .setIncludePad(false)
-                        .build();
-                canvas.save();
-                canvas.translate(margin, yPosition);
-                descriptionLayout.draw(canvas);
-                canvas.restore();
+                        .setAlignment(Layout.Alignment.ALIGN_NORMAL).setLineSpacing(0, 1.0f).setIncludePad(false).build();
+                canvas.save(); canvas.translate(margin, yPosition); descriptionLayout.draw(canvas); canvas.restore();
                 yPosition += descriptionLayout.getHeight() + 10;
             }
-
-            // Data docelowa i status
-            String status = achievement.isCompleted() ? "Completed" : "Pending";
-            if (achievement.getTargetDate() != null) {
-                status += " (Target: " + dateFormat.format(achievement.getTargetDate()) + ")";
-            }
-            if (achievement.isCompleted() && achievement.getCompletedAt() != null) {
-                status += " - Done on: " + dateFormat.format(achievement.getCompletedAt());
-            }
-            canvas.drawText(status, margin, yPosition, smallTextPaint);
-            yPosition += 15;
-
-            // XP
-            canvas.drawText("XP: " + achievement.getXpValue(), margin, yPosition, smallTextPaint);
-            yPosition += 25; // Większy odstęp przed następnym osiągnięciem
+            String status = achievement.isCompleted() ? getString(R.string.pdf_status_completed) : getString(R.string.pdf_status_pending);
+            if (achievement.getTargetDate() != null) status += " (" + getString(R.string.pdf_target_date_label) + dateFormat.format(achievement.getTargetDate()) + ")";
+            if (achievement.isCompleted() && achievement.getCompletedAt() != null) status += " - " + getString(R.string.pdf_done_on_label) + dateFormat.format(achievement.getCompletedAt());
+            canvas.drawText(status, margin, yPosition, smallTextPaint); yPosition += 15;
+            canvas.drawText(getString(R.string.pdf_xp_label) + achievement.getXpValue(), margin, yPosition, smallTextPaint); yPosition += 25;
         }
-
         document.finishPage(page);
-
-        // --- Zapis pliku PDF ---
-        // Zapisz do katalogu podręcznego aplikacji, podkatalog 'pdfs'
         File pdfDirPath = new File(getContext().getCacheDir(), "pdfs");
-        if (!pdfDirPath.exists()) {
-            pdfDirPath.mkdirs();
-        }
+        if (!pdfDirPath.exists()) { if(!pdfDirPath.mkdirs()){ Log.e(TAG, "Failed to create PDF directory."); document.close(); return null; } }
         File file = new File(pdfDirPath, "GamifyLife_Achievements_" + System.currentTimeMillis() + ".pdf");
-        Log.d(TAG, "Attempting to save PDF to: " + file.getAbsolutePath());
-
-        try (FileOutputStream fos = new FileOutputStream(file)) {
-            document.writeTo(fos);
-            Log.i(TAG, "PDF file created successfully: " + file.getAbsolutePath());
-        } catch (IOException e) {
-            Log.e(TAG, "Error writing PDF to file", e);
-            throw e; // Rzuć dalej, aby obsłużyć w wywołującej metodzie
-        } finally {
-            document.close(); // Zawsze zamykaj dokument
-        }
-        return file;
+        try (FileOutputStream fos = new FileOutputStream(file)) { document.writeTo(fos); }
+        catch (IOException e) { Log.e(TAG, "Error writing PDF", e); document.close(); throw e; }
+        finally { document.close(); }
+        Log.i(TAG, "PDF created: " + file.getAbsolutePath()); return file;
     }
 
     private void sharePdfFile(File pdfFile) {
         if (getContext() == null || pdfFile == null || !pdfFile.exists()) {
-            Log.e(TAG, "Cannot share PDF: context is null or file does not exist.");
-            Toast.makeText(getContext(), "Error: PDF file not found for sharing.", Toast.LENGTH_LONG).show();
+            Log.e(TAG, "Cannot share PDF: invalid state.");
+            if(getContext() != null) Toast.makeText(getContext(), getString(R.string.error_sharing_pdf_general), Toast.LENGTH_LONG).show();
             return;
         }
-
-        // Użyj FileProvider do uzyskania content URI
         Uri pdfUri = FileProvider.getUriForFile(getContext(), getContext().getPackageName() + ".provider", pdfFile);
-        Log.d(TAG, "Sharing PDF with URI: " + pdfUri.toString());
-
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("application/pdf");
-        shareIntent.putExtra(Intent.EXTRA_STREAM, pdfUri);
-        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // Ważne!
-
-        // Opcjonalnie: dodaj tytuł do chooser'a
-        Intent chooserIntent = Intent.createChooser(shareIntent, "Share Achievements PDF");
-
-        // Sprawdź, czy jest jakaś aplikacja, która może obsłużyć ten intent
-        if (chooserIntent.resolveActivity(getContext().getPackageManager()) != null) {
-            startActivity(chooserIntent);
-        } else {
-            Log.w(TAG, "No app found to handle PDF sharing intent.");
-            Toast.makeText(getContext(), "No app found to share PDF.", Toast.LENGTH_LONG).show();
-        }
+        shareIntent.setType("application/pdf"); shareIntent.putExtra(Intent.EXTRA_STREAM, pdfUri);
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        Intent chooserIntent = Intent.createChooser(shareIntent, getString(R.string.pdf_share_chooser_title));
+        if (chooserIntent.resolveActivity(getContext().getPackageManager()) != null) { startActivity(chooserIntent); }
+        else { Log.w(TAG, "No app to handle PDF share."); if(getContext() != null) Toast.makeText(getContext(), getString(R.string.no_app_to_share_pdf), Toast.LENGTH_LONG).show(); }
     }
 
     @Override
@@ -626,5 +547,113 @@ public class AchievementsFragment extends Fragment {
         } else {
             Log.w(TAG, "revertCheckBoxState: Achievement " + achievementId + " not found in local list to revert UI.");
         }
+    }
+
+    // NOWE METODY DLA USUWANIA
+    private void showDeleteConfirmationDialog(final Achievement achievement, final int position) {
+        if (getContext() == null || achievement == null) return;
+        new AlertDialog.Builder(getContext())
+                .setTitle(getString(R.string.dialog_delete_achievement_title))
+                .setMessage(getString(R.string.dialog_delete_achievement_message, achievement.getTitle()))
+                .setPositiveButton(getString(R.string.delete_button_text), (dialog, which) -> {
+                    deleteAchievementAndUpdateProfile(achievement, position);
+                })
+                .setNegativeButton(getString(R.string.cancel_button_text), null)
+                .setIcon(R.drawable.ic_delete) // Użyj ikony kosza
+                .show();
+    }
+
+    private void deleteAchievementAndUpdateProfile(final Achievement achievementToDelete, final int positionInAdapter) {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null || achievementToDelete.getDocumentId() == null || getContext() == null || !isAdded()) {
+            Log.w(TAG, "Cannot delete: Invalid state (user, achievementId, context, or fragment not added).");
+            if (getContext() != null) Toast.makeText(getContext(), getString(R.string.failed_to_delete_achievement) + ": Invalid data.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Log.i(TAG, "Attempting to delete: " + achievementToDelete.getTitle() + ", XP: " + achievementToDelete.getXpValue() + ", Completed: " + achievementToDelete.isCompleted() + ", ID: " + achievementToDelete.getDocumentId());
+
+        final String userId = currentUser.getUid();
+        final String achievementId = achievementToDelete.getDocumentId();
+
+        DocumentReference userProfileRef = db.collection("users").document(userId);
+        DocumentReference achievementRef = db.collection("users").document(userId).collection("achievements").document(achievementId);
+
+        db.runTransaction((com.google.firebase.firestore.Transaction.Function<Void>) transaction -> {
+            DocumentSnapshot userSnapshot = transaction.get(userProfileRef);
+            UserProfile userProfile = userSnapshot.toObject(UserProfile.class);
+            if (userProfile == null) throw new FirebaseFirestoreException("User profile not found.", FirebaseFirestoreException.Code.ABORTED);
+
+            DocumentSnapshot achievementSnapshot = transaction.get(achievementRef);
+            Achievement currentDbAchievement = null; // Zmienna na odczytane z bazy osiągnięcie
+            boolean wasCompletedInDb = false;
+            long xpFromDb = 0;
+
+            if (achievementSnapshot.exists()) {
+                currentDbAchievement = achievementSnapshot.toObject(Achievement.class);
+                if (currentDbAchievement != null) {
+                    currentDbAchievement.setDocumentId(achievementSnapshot.getId()); // Ważne dla spójności
+                    wasCompletedInDb = currentDbAchievement.isCompleted();
+                    xpFromDb = currentDbAchievement.getXpValue();
+                    Log.d(TAG, "Transaction: Fetched DB achievement: " + currentDbAchievement.getTitle() + ", Completed: " + wasCompletedInDb + ", XP: " + xpFromDb);
+                } else {
+                    Log.w(TAG, "Transaction: Achievement snapshot exists but could not be converted to object. ID: " + achievementId);
+                }
+            } else {
+                Log.w(TAG, "Transaction: Achievement document " + achievementId + " does not exist in DB. Cannot update profile based on its state.");
+                // Jeśli dokument nie istnieje, po prostu go usuwamy (lub próbujemy, jeśli został usunięty w międzyczasie)
+                // Nie zmieniamy profilu w tym przypadku.
+            }
+
+            if (wasCompletedInDb) { // Modyfikuj profil tylko jeśli osiągnięcie było ukończone W BAZIE
+                if (xpFromDb > 0) {
+                    long newTotalXp = Math.max(0, userProfile.getTotalXp() - xpFromDb);
+                    Log.d(TAG, "Transaction: Updating profile. OldTotalXP: " + userProfile.getTotalXp() +
+                            ", Subtracting XP: " + xpFromDb + " -> NewTotalXP: " + newTotalXp);
+                    userProfile.setTotalXp(newTotalXp);
+                    userProfile.setLevel(LevelUtils.calculateLevel(newTotalXp));
+                }
+                userProfile.setAchievementsCompleted(Math.max(0, userProfile.getAchievementsCompleted() - 1));
+                transaction.set(userProfileRef, userProfile);
+                Log.d(TAG, "Transaction: User profile updated. New Level: " + userProfile.getLevel() + ", AchievementsCompleted: " + userProfile.getAchievementsCompleted());
+            } else {
+                Log.d(TAG, "Transaction: DB Achievement was not completed or not found, no XP/count change for profile.");
+            }
+
+            Log.d(TAG, "Transaction: Deleting achievement document: " + achievementId);
+            transaction.delete(achievementRef); // Zawsze próbuj usunąć
+            return null;
+        }).addOnSuccessListener(aVoid -> {
+            if (getContext() == null || !isAdded()) return;
+            Log.i(TAG, "SUCCESS: Transaction for deleting '" + achievementToDelete.getTitle() + "' and profile update succeeded.");
+            Toast.makeText(getContext(), getString(R.string.achievement_deleted_toast), Toast.LENGTH_SHORT).show();
+
+            int actualPositionToRemove = -1;
+            for (int i = 0; i < achievementList.size(); i++) {
+                if (achievementId.equals(achievementList.get(i).getDocumentId())) {
+                    actualPositionToRemove = i;
+                    break;
+                }
+            }
+
+            if (actualPositionToRemove != -1) {
+                achievementList.remove(actualPositionToRemove);
+                achievementAdapter.notifyItemRemoved(actualPositionToRemove);
+                achievementAdapter.notifyItemRangeChanged(actualPositionToRemove, achievementList.size()); // Zaktualizuj pozostałe pozycje
+                Log.d(TAG, "Local item removed from adapter at actual position: " + actualPositionToRemove);
+            } else {
+                Log.w(TAG, "Could not find item by ID " + achievementId + " in local list to remove UI after delete. Original adapter position was " + positionInAdapter + ". Reloading list for safety.");
+                loadAchievementsForDate(selectedDate);
+            }
+
+            if (achievementList.isEmpty() && textViewEmpty != null) {
+                textViewEmpty.setText(getString(R.string.no_achievements_for_date));
+                textViewEmpty.setVisibility(View.VISIBLE);
+            }
+
+        }).addOnFailureListener(e -> {
+            if (getContext() == null || !isAdded()) return;
+            Log.e(TAG, "FAILURE: Transaction for deleting '" + achievementToDelete.getTitle() + "' failed.", e);
+            Toast.makeText(getContext(), getString(R.string.failed_to_delete_achievement) + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
+        });
     }
 }

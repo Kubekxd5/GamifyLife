@@ -12,14 +12,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat; // Dodaj ten import
 import androidx.preference.PreferenceManager;
 
 import com.example.gamifylife.MainActivity;
-import com.example.gamifylife.MyApplication;
+import com.example.gamifylife.util.MyApplication;
 import com.example.gamifylife.NotificationSettingsActivity;
 import com.example.gamifylife.R;
 import com.google.firebase.auth.FirebaseAuth;

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Podstawowe kolory -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -8,29 +9,78 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- Light Theme Colors (przykładowe) -->
+    <color name="dark_background_violet">#1F1A24</color> <!-- Bardzo ciemny fioletowo-szary -->
+    <color name="dark_surface_violet">#2C2536</color>    <!-- Ciemny fioletowo-szary dla powierzchni -->
+
+
+    <!-- Kolory dla motywu Dark-Orange -->
+    <color name="orange_primary_dark">#FFB74D</color> <!-- Jaśniejszy pomarańczowy (np. Amber 300/400) -->
+    <color name="orange_onPrimary_dark">#4E342E</color> <!-- Bardzo ciemny brąz/czarny na jasnym pomarańczowym -->
+    <color name="orange_primaryContainer_dark">#5D4037</color> <!-- Ciemny brąz jako kontener -->
+    <color name="orange_onPrimaryContainer_dark">#FFCC80</color> <!-- Jasny pomarańczowy tekst na ciemnym brązowym kontenerze -->
+    <color name="orange_secondary_dark">#FFD54F</color> <!-- Jaśniejszy żółto-pomarańczowy (np. Amber 200/300) -->
+    <color name="orange_onSecondary_dark">#4E342E</color> <!-- Bardzo ciemny brąz/czarny na drugorzędnym -->
+    <color name="dark_background_orange">#212121</color> <!-- Standardowy ciemnoszary lub lekko brązowawy ciemny -->
+    <color name="dark_surface_orange">#303030</color>    <!-- Ciemnoszary dla powierzchni -->
+    <color name="dark_surface_variant_orange">#424242</color> <!-- Jeszcze inny odcień szarości/brązu -->
+    <color name="on_dark_surface_variant_orange">#BDBDBD</color> <!-- Jasnoszary tekst -->
+
+    <!-- Ogólny jasny tekst dla ciemnych motywów -->
+    <color name="on_dark_general">#E0E0E0</color> <!-- Jasnoszary, prawie biały -->
+
+    <!-- NOWA PALETA BIAŁO-POMARAŃCZOWA (Material 3 - Light) -->
+    <color name="orange_primary_light">#FD9346</color> <!-- Główny pomarańczowy (np. DarkOrange) -->
+    <color name="orange_onPrimary_light">#FFFFFFFF</color> <!-- Tekst na głównym pomarańczowym (biały) -->
+    <color name="orange_primaryContainer_light">#FFE0B2</color> <!-- Jasny kontener pomarańczowy -->
+    <color name="orange_onPrimaryContainer_light">#5D4037</color> <!-- Ciemny tekst na jasnym kontenerze pomarańczowym -->
+    <color name="orange_secondary_light">#FD7F2C</color> <!-- Drugorzędny pomarańczowy/żółty -->
+    <color name="orange_onSecondary_light">#FF000000</color> <!-- Tekst na drugorzędnym (czarny) -->
+    <color name="orange_secondaryContainer_light">#FF6200</color> <!-- Jasny kontener drugorzędny -->
+    <color name="orange_onSecondaryContainer_light">#8D6E63</color> <!-- Tekst na kontenerze drugorzędnym -->
+
+    <color name="app_background_light">#FFFFFFFF</color> <!-- Białe tło -->
+    <color name="app_onBackground_light">#FF212121</color> <!-- Ciemnoszary tekst na białym tle -->
+    <color name="app_surface_light">#FFFFFFFF</color> <!-- Biała powierzchnia (np. karty) -->
+    <color name="app_onSurface_light">#FF212121</color> <!-- Ciemnoszary tekst na białej powierzchni -->
+    <color name="app_surfaceVariant_light">#FFF3E0</color> <!-- Bardzo jasny pomarańczowy/kremowy dla wariantów powierzchni -->
+    <color name="app_onSurfaceVariant_light">#795548</color> <!-- Brązowawy tekst na wariancie powierzchni -->
+    <color name="app_outline_light">#A1887F</color> <!-- Kolor obramowań -->
+
+    <!-- Kolory dla błędów, itp. (możesz zostawić standardowe lub dostosować) -->
+    <color name="md_theme_light_error">#B3261E</color>
+    <color name="md_theme_light_onError">#FFFFFF</color>
+
+    <!-- Kolory dla wykresu (tryb jasny - pomarańczowy) -->
+    <color name="chart_bar_color">@color/orange_primary_light</color>
+    <color name="chart_text_color">@color/app_onSurface_light</color>
+    <color name="chart_grid_line_color">@color/app_surfaceVariant_light</color>
+
+    <!-- Kolory dla widgetu (tryb jasny - pomarańczowy) -->
+    <color name="widget_background_color">@color/app_surface_light</color>
+    <color name="widget_text_primary_color">@color/app_onSurface_light</color>
+    <color name="widget_text_secondary_color">@color/app_onSurfaceVariant_light</color>
+    <color name="widget_border_color">@color/app_outline_light</color>
+
+    <!-- Zachowaj też definicje dla ciemnych motywów (będą nadpisane w values-night) -->
+    <color name="md_theme_dark_primary">#FFC107</color> <!-- Placeholder dla ciemnego primary -->
+    <color name="md_theme_dark_onPrimary">#000000</color>
+    <color name="md_theme_dark_surface_m3">#121212</color>
+    <color name="md_theme_dark_onSurface_m3">#FFFFFF</color>
+
+    <!-- Kolory dla trybu jasnego -->
     <color name="light_background">#FFFFFFFF</color>
     <color name="light_surface">#FFFFFFFF</color>
     <color name="on_light_background">#FF000000</color>
     <color name="on_light_surface">#FF000000</color>
-    <color name="chart_bar_color_light">#FF6200EE</color> <!-- Przykład dla wykresu w jasnym motywie -->
-    <color name="chart_text_color_light">#FF000000</color>
-    <color name="chart_grid_line_color_light">#FFE0E0E0</color>
-    <color name="md_theme_light_onSurface">#FFFFFF</color> <!-- Biały tekst na ciemnym tle -->
-    <color name="chart_bar_color">@color/purple_500</color> <!-- Lub konkretny HEX dla jasnego -->
-    <color name="chart_text_color">@color/black</color>   <!-- Lub on_light_surface -->
-    <color name="chart_grid_line_color">#E0E0E0</color>  <!-- Jasnoszary -->
 
-    <!-- Dark Theme Colors (przykładowe, mogą być też w values-night/colors.xml) -->
-    <color name="dark_background">#FF121212</color>
-    <color name="dark_surface">#FF1E1E1E</color>
-    <color name="on_dark_background">#FFFFFFFF</color>
-    <color name="on_dark_surface">#FFFFFFFF</color>
-    <color name="chart_bar_color_dark">#FFBB86FC</color> <!-- Przykład dla wykresu w ciemnym motywie -->
-    <color name="chart_text_color_dark">#FFFFFFFF</color>
-    <color name="chart_grid_line_color_dark">#FF424242</color>
+    <!-- Kolory dla trybu ciemnego - MUSZĄ MIEĆ DEKLARACJĘ TUTAJ, nawet jeśli wartości są dla jasnego -->
+    <!-- Te wartości zostaną nadpisane przez te z values-night/colors.xml, gdy aktywny będzie tryb ciemny -->
+    <color name="dark_background">#FFFFFFFF</color> <!-- Domyślna wartość dla jasnego, zostanie nadpisana -->
+    <color name="dark_surface">#FFFFFFFF</color>    <!-- Domyślna wartość dla jasnego, zostanie nadpisana -->
+    <color name="on_dark_background">#FF000000</color>  <!-- Domyślna wartość dla jasnego, zostanie nadpisana -->
+    <color name="on_dark_surface">#FF000000</color>   <!-- Domyślna wartość dla jasnego, zostanie nadpisana -->
 
-    <!-- Material Design 3 Theming (przykładowe, jeśli używasz M3) -->
+    <!-- Pełny zestaw kolorów Material 3 dla trybu jasnego -->
     <color name="md_theme_light_primary">#6750A4</color>
     <color name="md_theme_light_onPrimary">#FFFFFF</color>
     <color name="md_theme_light_primaryContainer">#EADDFF</color>
@@ -43,12 +93,10 @@
     <color name="md_theme_light_onTertiary">#FFFFFF</color>
     <color name="md_theme_light_tertiaryContainer">#FFD8E4</color>
     <color name="md_theme_light_onTertiaryContainer">#31111D</color>
-    <color name="md_theme_light_error">#B3261E</color>
-    <color name="md_theme_light_onError">#FFFFFF</color>
     <color name="md_theme_light_errorContainer">#F9DEDC</color>
     <color name="md_theme_light_onErrorContainer">#410E0B</color>
     <color name="md_theme_light_outline">#79747E</color>
-    <color name="md_theme_light_background_m3">#FFFBFE</color> <!-- Zmieniłem nazwę, żeby nie kolidowała z light_background -->
+    <color name="md_theme_light_background_m3">#FFFBFE</color>
     <color name="md_theme_light_onBackground_m3">#1C1B1F</color>
     <color name="md_theme_light_surface_m3">#FFFBFE</color>
     <color name="md_theme_light_onSurface_m3">#1C1B1F</color>
@@ -62,19 +110,42 @@
     <color name="md_theme_light_outlineVariant">#CAC4D0</color>
     <color name="md_theme_light_scrim">#000000</color>
 
-    <color name="md_theme_dark_primary">#D0BCFF</color>
-    <color name="md_theme_dark_onPrimary">#381E72</color>
-    <color name="md_theme_dark_primaryContainer">#4F378B</color>
-    <color name="md_theme_dark_onPrimaryContainer">#EADDFF</color>
-    <color name="md_theme_dark_secondary">#CCC2DC</color>
-    <color name="md_theme_dark_onSecondary">#332D41</color>
-    <color name="md_theme_dark_secondaryContainer">#4A4458</color>
-    <color name="md_theme_dark_onSecondaryContainer">#E8DEF8</color>
-    <color name="md_theme_dark_background_m3">#1C1B1F</color>
-    <color name="md_theme_dark_onBackground_m3">#E6E1E5</color>
-    <color name="md_theme_dark_surface_m3">#1C1B1F</color>
-    <color name="md_theme_dark_onSurface_m3">#E6E1E5</color>
-    <color name="md_theme_dark_surfaceVariant">#49454F</color>
-    <color name="md_theme_dark_onSurfaceVariant">#CAC4D0</color>
+    <!-- Odpowiedniki kolorów ciemnego motywu zdefiniowane tutaj,
+         aby uniknąć błędów "resource not found" w konfiguracjach bez -night.
+         Ich wartości zostaną nadpisane przez te z values-night/colors.xml. -->
+    <color name="md_theme_dark_primaryContainer">@color/md_theme_light_primaryContainer</color> <!-- Placeholder -->
+    <color name="md_theme_dark_onPrimaryContainer">@color/md_theme_light_onPrimaryContainer</color> <!-- Placeholder -->
+    <color name="md_theme_dark_secondary">@color/md_theme_light_secondary</color> <!-- Placeholder -->
+    <color name="md_theme_dark_onSecondary">@color/md_theme_light_onSecondary</color> <!-- Placeholder -->
+    <color name="md_theme_dark_secondaryContainer">@color/md_theme_light_secondaryContainer</color> <!-- Placeholder -->
+    <color name="md_theme_dark_onSecondaryContainer">@color/md_theme_light_onSecondaryContainer</color> <!-- Placeholder -->
+    <color name="md_theme_dark_tertiary">@color/md_theme_light_tertiary</color>
+    <color name="md_theme_dark_onTertiary">@color/md_theme_light_onTertiary</color>
+    <color name="md_theme_dark_tertiaryContainer">@color/md_theme_light_tertiaryContainer</color>
+    <color name="md_theme_dark_onTertiaryContainer">@color/md_theme_light_onTertiaryContainer</color>
+    <color name="md_theme_dark_error">@color/md_theme_light_error</color>
+    <color name="md_theme_dark_onError">@color/md_theme_light_onError</color>
+    <color name="md_theme_dark_errorContainer">@color/md_theme_light_errorContainer</color>
+    <color name="md_theme_dark_onErrorContainer">@color/md_theme_light_onErrorContainer</color>
+    <color name="md_theme_dark_outline">@color/md_theme_light_outline</color> <!-- Placeholder -->
+    <color name="md_theme_dark_background_m3">@color/md_theme_light_background_m3</color> <!-- Placeholder -->
+    <color name="md_theme_dark_onBackground_m3">@color/md_theme_light_onBackground_m3</color> <!-- Placeholder -->
+    <color name="md_theme_dark_surfaceVariant">@color/md_theme_light_surfaceVariant</color> <!-- Placeholder -->
+    <color name="md_theme_dark_onSurfaceVariant">@color/md_theme_light_onSurfaceVariant</color> <!-- Placeholder -->
+    <color name="md_theme_dark_inverseSurface">@color/md_theme_light_inverseSurface</color> <!-- Placeholder -->
+    <color name="md_theme_dark_inverseOnSurface">@color/md_theme_light_inverseOnSurface</color> <!-- Placeholder -->
+    <color name="md_theme_dark_inversePrimary">@color/md_theme_light_inversePrimary</color> <!-- Placeholder -->
+    <color name="md_theme_dark_shadow">@color/md_theme_light_shadow</color>
+    <color name="md_theme_dark_surfaceTint">@color/md_theme_light_surfaceTint</color> <!-- Może być inny dla dark -->
+    <color name="md_theme_dark_outlineVariant">@color/md_theme_light_outlineVariant</color> <!-- Placeholder -->
+    <color name="md_theme_dark_scrim">@color/md_theme_light_scrim</color>
+
+    <color name="hacker_green_neon">#39FF14</color> <!-- Jasny neonowy zielony -->
+    <color name="hacker_almost_black">#0D0D0D</color> <!-- Bardzo ciemny, prawie czarny -->
+    <color name="hacker_dark_surface">#101010</color>
+    <color name="hacker_grey_button">#2A2A2A</color> <!-- Ciemnoszary dla przycisków -->
+    <color name="hacker_dark_green_container">#0A2A03</color>
+    <color name="hacker_darker_grey">#1F1F1F</color>
+    <color name="hacker_light_grey_text">#A0A0A0</color>
 
 </resources>

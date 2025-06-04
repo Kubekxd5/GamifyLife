@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler; // Import dla Handler
 import android.os.Looper;  // Import dla Looper
@@ -24,6 +25,19 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+
+import com.example.gamifylife.models.UserProfile;
+import com.example.gamifylife.util.WidgetConstants; // Import
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query; // Dla Query.Direction
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.example.gamifylife.models.UserProfile;
+import java.util.Calendar;
+import java.util.Date;
+
 import com.example.gamifylife.helpers.LocaleHelper;
 import com.example.gamifylife.helpers.ThemeHelper;
 import com.example.gamifylife.ui.settings.SettingsFragment;
@@ -41,6 +55,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private static final String TAG_MAIN_ACTIVITY = "MainActivity"; // Tag dla logów
 
+    private FirebaseFirestore db;
+
     private DrawerLayout drawerLayout;
     private FirebaseAuth mAuth;
     private AdView mAdViewBanner;
@@ -52,6 +68,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -64,8 +81,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
-        updateNavHeader();
 
         if (savedInstanceState == null) {
             Log.d(TAG_MAIN_ACTIVITY, "onCreate: savedInstanceState is null, preparing to load default fragment.");
@@ -108,33 +123,102 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void updateNavHeader() {
-        if (navigationView == null) { // Sprawdź, czy navigationView zostało zainicjalizowane
+        if (navigationView == null) {
             Log.e(TAG_MAIN_ACTIVITY, "updateNavHeader: NavigationView is null.");
             return;
         }
-        View headerView = navigationView.getHeaderView(0);
+        View headerView = navigationView.getHeaderView(0); // Zawsze pobieraj header view, może być tworzony dynamicznie
         if (headerView == null) {
             Log.e(TAG_MAIN_ACTIVITY, "updateNavHeader: HeaderView is null.");
             return;
         }
-        TextView navHeaderUserEmail = headerView.findViewById(R.id.textViewLoggedInUserName);
+
+        // Znajdź widoki w headerView ZA KAŻDYM RAZEM, gdy aktualizujesz
+        TextView textViewNavHeaderTitle = headerView.findViewById(R.id.textViewNavHeaderTitle); // Zakładam, że to jest dla nicku
+        TextView navHeaderUserEmail = headerView.findViewById(R.id.textViewLoggedInUserName); // To jest dla e-maila
         Button navHeaderLogoutButton = headerView.findViewById(R.id.buttonLogout);
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
+
         if (currentUser != null) {
+            // Ustaw e-mail (to działało)
             if (navHeaderUserEmail != null) {
                 navHeaderUserEmail.setText(currentUser.getEmail());
             } else {
-                Log.w(TAG_MAIN_ACTIVITY, "updateNavHeader: navHeaderUserEmail TextView not found.");
+                Log.w(TAG_MAIN_ACTIVITY, "updateNavHeader: navHeaderUserEmail TextView not found in header.");
             }
+
+            // Pobierz nick z Firestore
+            if (textViewNavHeaderTitle != null) {
+                // Ustaw domyślny tekst lub placeholder na czas ładowania
+                textViewNavHeaderTitle.setText(getString(R.string.nav_header_loading_nickname)); // Dodaj ten string
+
+                db.collection("users").document(currentUser.getUid())
+                        .get()
+                        .addOnSuccessListener(documentSnapshot -> {
+                            if (documentSnapshot.exists()) {
+                                UserProfile userProfile = documentSnapshot.toObject(UserProfile.class);
+                                if (userProfile != null && userProfile.getNickname() != null && !userProfile.getNickname().isEmpty()) {
+                                    // Ponownie znajdź headerView i textViewNavHeaderTitle, bo jesteśmy w callbacku
+                                    View currentHeaderView = navigationView.getHeaderView(0);
+                                    if (currentHeaderView != null) {
+                                        TextView currentNavTitle = currentHeaderView.findViewById(R.id.textViewNavHeaderTitle);
+                                        if (currentNavTitle != null) {
+                                            currentNavTitle.setText(userProfile.getNickname());
+                                            Log.d(TAG_MAIN_ACTIVITY, "Nickname set in nav header: " + userProfile.getNickname());
+                                        }
+                                    }
+                                } else {
+                                    // Nickname jest pusty lub null w profilu, użyj części e-maila lub domyślnego
+                                    View currentHeaderView = navigationView.getHeaderView(0);
+                                    if (currentHeaderView != null) {
+                                        TextView currentNavTitle = currentHeaderView.findViewById(R.id.textViewNavHeaderTitle);
+                                        if (currentNavTitle != null) {
+                                            String emailPrefix = currentUser.getEmail() != null ? currentUser.getEmail().split("@")[0] : getString(R.string.nav_header_default_nickname);
+                                            currentNavTitle.setText(emailPrefix);
+                                        }
+                                    }
+                                    Log.w(TAG_MAIN_ACTIVITY, "Nickname not found in profile, using email prefix or default.");
+                                }
+                            } else {
+                                // Dokument profilu nie istnieje
+                                View currentHeaderView = navigationView.getHeaderView(0);
+                                if (currentHeaderView != null) {
+                                    TextView currentNavTitle = currentHeaderView.findViewById(R.id.textViewNavHeaderTitle);
+                                    if (currentNavTitle != null) {
+                                        String emailPrefix = currentUser.getEmail() != null ? currentUser.getEmail().split("@")[0] : getString(R.string.nav_header_default_nickname);
+                                        currentNavTitle.setText(emailPrefix);
+                                    }
+                                }
+                                Log.w(TAG_MAIN_ACTIVITY, "User profile document does not exist for UID: " + currentUser.getUid());
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG_MAIN_ACTIVITY, "Error fetching user profile for nav header", e);
+                            // W razie błędu, możesz zostawić "Loading..." lub ustawić domyślny
+                            View currentHeaderView = navigationView.getHeaderView(0);
+                            if (currentHeaderView != null) {
+                                TextView currentNavTitle = currentHeaderView.findViewById(R.id.textViewNavHeaderTitle);
+                                if (currentNavTitle != null) {
+                                    String emailPrefix = currentUser.getEmail() != null ? currentUser.getEmail().split("@")[0] : getString(R.string.nav_header_default_nickname);
+                                    currentNavTitle.setText(emailPrefix);
+                                }
+                            }
+                        });
+            } else {
+                Log.w(TAG_MAIN_ACTIVITY, "updateNavHeader: textViewNavHeaderTitle (for nickname) not found in header.");
+            }
+
+            // Ustaw listener dla przycisku wylogowania
             if (navHeaderLogoutButton != null) {
                 navHeaderLogoutButton.setOnClickListener(v -> logoutUser());
             } else {
-                Log.w(TAG_MAIN_ACTIVITY, "updateNavHeader: navHeaderLogoutButton not found.");
+                Log.w(TAG_MAIN_ACTIVITY, "updateNavHeader: navHeaderLogoutButton not found in header.");
             }
+
         } else {
             Log.w(TAG_MAIN_ACTIVITY, "updateNavHeader: currentUser is null, navigating to login.");
-            navigateToLogin();
+            navigateToLogin(); // To jest dobre, jeśli użytkownik nie jest zalogowany, nie powinien być w MainActivity
         }
     }
 
@@ -193,6 +277,101 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
+    private void updateWidgetData() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            // Wyczyść dane widgetu, jeśli użytkownik nie jest zalogowany
+            SharedPreferences prefs = getSharedPreferences(WidgetConstants.PREFS_WIDGET_DATA, Context.MODE_PRIVATE);
+            prefs.edit()
+                    .remove(WidgetConstants.KEY_LAST_USER_ID)
+                    .remove(WidgetConstants.KEY_TODAY_PENDING_ACHIEVEMENTS_COUNT)
+                    .remove(WidgetConstants.KEY_USER_NICKNAME_FOR_WIDGET)
+                    .apply();
+            triggerWidgetUpdate();
+            return;
+        }
+
+        String userId = currentUser.getUid();
+        String nickName = currentUser.getDisplayName();
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Pobierz nick użytkownika
+        db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
+            String nickname = "";
+            if (documentSnapshot.exists()) {
+                UserProfile profile = documentSnapshot.toObject(UserProfile.class);
+                if (profile != null) {
+                    nickname = profile.getNickname();
+                }
+            }
+
+            // Zapisz nick do SharedPreferences
+            SharedPreferences prefs = getSharedPreferences(WidgetConstants.PREFS_WIDGET_DATA, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString(WidgetConstants.KEY_USER_NICKNAME_FOR_WIDGET, nickname);
+            // Nie rób apply() jeszcze, poczekaj na liczbę zadań
+
+            // Pobierz liczbę nieukończonych zadań na dzisiaj
+            Calendar calStart = Calendar.getInstance();
+            calStart.set(Calendar.HOUR_OF_DAY, 0); calStart.set(Calendar.MINUTE, 0); calStart.set(Calendar.SECOND, 0); calStart.set(Calendar.MILLISECOND, 0);
+            Date todayStart = calStart.getTime();
+
+            Calendar calEnd = Calendar.getInstance();
+            calEnd.set(Calendar.HOUR_OF_DAY, 23); calEnd.set(Calendar.MINUTE, 59); calEnd.set(Calendar.SECOND, 59); calEnd.set(Calendar.MILLISECOND, 999);
+            Date todayEnd = calEnd.getTime();
+
+            db.collection("users").document(userId).collection("achievements")
+                    .whereEqualTo("completed", false)
+                    .whereGreaterThanOrEqualTo("targetDate", todayStart)
+                    .whereLessThanOrEqualTo("targetDate", todayEnd)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        int count = queryDocumentSnapshots.size();
+                        Log.d(TAG_MAIN_ACTIVITY, "Updating widget data: UserID=" + userId + ", Nickname=" + nickName + ", Today's pending tasks=" + count);
+
+                        editor.putString(WidgetConstants.KEY_LAST_USER_ID, userId);
+                        editor.putInt(WidgetConstants.KEY_TODAY_PENDING_ACHIEVEMENTS_COUNT, count);
+                        editor.apply(); // Teraz zapisz wszystko
+
+                        triggerWidgetUpdate(); // Poinformuj widget o zmianie
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG_MAIN_ACTIVITY, "Failed to fetch achievements for widget", e);
+                        // Możesz zapisać 0 lub -1 jako błąd
+                        editor.putInt(WidgetConstants.KEY_TODAY_PENDING_ACHIEVEMENTS_COUNT, -1); // -1 jako wskaźnik błędu
+                        editor.apply();
+                        triggerWidgetUpdate();
+                    });
+        }).addOnFailureListener(e -> {
+            Log.e(TAG_MAIN_ACTIVITY, "Failed to fetch user profile for widget", e);
+            // Wyczyść dane, jeśli nie można pobrać profilu
+            SharedPreferences prefs = getSharedPreferences(WidgetConstants.PREFS_WIDGET_DATA, Context.MODE_PRIVATE);
+            prefs.edit()
+                    .remove(WidgetConstants.KEY_LAST_USER_ID)
+                    .remove(WidgetConstants.KEY_TODAY_PENDING_ACHIEVEMENTS_COUNT)
+                    .remove(WidgetConstants.KEY_USER_NICKNAME_FOR_WIDGET)
+                    .apply();
+            triggerWidgetUpdate();
+        });
+    }
+
+    private void triggerWidgetUpdate() {
+        Context context = getApplicationContext();
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        ComponentName thisWidget = new ComponentName(context, GamifyLifeWidgetProvider.class);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+        if (appWidgetIds != null && appWidgetIds.length > 0) {
+            Intent intent = new Intent(context, GamifyLifeWidgetProvider.class);
+            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+            context.sendBroadcast(intent);
+            Log.d(TAG_MAIN_ACTIVITY, "Widget update broadcast sent.");
+        } else {
+            Log.d(TAG_MAIN_ACTIVITY, "No widgets to update.");
+        }
+    }
+
     // ... (reszta metod: onBackPressed, onCreateOptionsMenu, showLanguageSelectionDialog, onOptionsItemSelected, etc.)
     // Upewnij się, że wszystkie Toasty w tych metodach używają string resources.
 
@@ -223,6 +402,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (mAdViewBanner != null) {
             mAdViewBanner.resume();
         }
+        updateWidgetData();
+        updateNavHeader();
         // ... (reszta kodu onResume, np. updateNavHeader)
     }
 

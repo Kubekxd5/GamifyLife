@@ -4,66 +4,102 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="4dp"
     app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    app:cardElevation="2dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:gravity="center_vertical">
+        android:padding="12dp">
 
         <ImageView
             android:id="@+id/imageViewAchievementIconItem"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginEnd="12dp"
+            android:contentDescription="@string/cd_achievement_image_preview"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:srcCompat="@drawable/ic_achievement_default" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/textViewAchievementTitleItem"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/checkboxAchievementCompleted"
+            app:layout_constraintStart_toEndOf="@+id/imageViewAchievementIconItem"
+            app:layout_constraintTop_toTopOf="@+id/imageViewAchievementIconItem"
+            tools:text="Achievement Title Lorem Ipsum Dolor Sit" />
 
-            <TextView
-                android:id="@+id/textViewAchievementTitleItem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Achievement Title"
-                android:textAppearance="?attr/textAppearanceListItem"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+        <TextView
+            android:id="@+id/textViewAchievementDescriptionItem"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="?android:attr/textColorSecondary"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/textViewAchievementTitleItem"
+            app:layout_constraintStart_toStartOf="@+id/textViewAchievementTitleItem"
+            app:layout_constraintTop_toBottomOf="@+id/textViewAchievementTitleItem"
+            tools:text="Short description of the achievement goes here."
+            tools:visibility="visible" />
 
-            <TextView
-                android:id="@+id/textViewAchievementDescriptionItem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Short description of the achievement if available."
-                android:textAppearance="?attr/textAppearanceListItemSecondary"
-                android:textSize="14sp"
-                android:maxLines="2"
-                android:ellipsize="end"/>
-        </LinearLayout>
+        <TextView
+            android:id="@+id/textViewAchievementXpItem"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="?android:attr/textColorSecondary"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/textViewAchievementDescriptionItem"
+            app:layout_constraintStart_toStartOf="@+id/textViewAchievementDescriptionItem"
+            app:layout_constraintTop_toBottomOf="@+id/textViewAchievementDescriptionItem"
+            tools:text="XP"
+            tools:visibility="visible" />
 
         <CheckBox
             android:id="@+id/checkboxAchievementCompleted"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp" />
+            app:layout_constraintEnd_toStartOf="@+id/buttonEditAchievement"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <!-- NOWY PRZYCISK EDYCJI -->
         <ImageButton
             android:id="@+id/buttonEditAchievement"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_edit"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/edit_achievement_button_cd"
-            android:padding="8dp"
-            android:layout_marginStart="8dp"/>
+            android:src="@drawable/ic_edit"
+            app:layout_constraintEnd_toStartOf="@+id/buttonDeleteAchievement"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:tint="?attr/colorControlNormal" />
 
-    </LinearLayout>
+        <!-- NOWY PRZYCISK USUWANIA -->
+        <ImageButton
+            android:id="@+id/buttonDeleteAchievement"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/delete_achievement_button_cd"
+            android:src="@drawable/ic_delete"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:tint="?attr/colorError" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

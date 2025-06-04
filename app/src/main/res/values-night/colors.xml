@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Podstawowe kolory (te są zwykle globalne, ale można nadpisać) -->
+    <!-- <color name="purple_200">...</color> -->
+    <!-- <color name="black">...</color> -->
+    <!-- <color name="white">...</color> -->
+
+    <!-- Kolory dla trybu ciemnego -->
+    <color name="dark_background">#FF121212</color>
+    <color name="dark_surface">#FF1E1E1E</color>
+    <color name="on_dark_background">#FFFFFFFF</color>
+    <color name="on_dark_surface">#FFFFFFFF</color>
+
+    <!-- Kolory dla wykresu (tryb ciemny) -->
+    <color name="chart_bar_color">@color/purple_200</color>
+    <color name="chart_text_color">@color/white</color>
+    <color name="chart_grid_line_color">#424242</color>
+
+    <!-- Kolory dla widgetu (tryb ciemny) -->
+    <color name="widget_background_color">#FF252525</color> <!-- Ciemniejszy szary -->
+    <color name="widget_text_primary_color">#FFFFFFFF</color>
+    <color name="widget_text_secondary_color">#B3FFFFFF</color> <!-- Biały z 70% alpha -->
+    <color name="widget_border_color">#1FFFFFFF</color> <!-- Biały z 12% alpha -->
+
+    <!-- Pełny zestaw kolorów Material 3 dla trybu ciemnego -->
+    <color name="md_theme_dark_primary">#D0BCFF</color>
+    <color name="md_theme_dark_onPrimary">#381E72</color>
+    <color name="md_theme_dark_primaryContainer">#4F378B</color>
+    <color name="md_theme_dark_onPrimaryContainer">#EADDFF</color>
+    <color name="md_theme_dark_secondary">#CCC2DC</color>
+    <color name="md_theme_dark_onSecondary">#332D41</color>
+    <color name="md_theme_dark_secondaryContainer">#4A4458</color>
+    <color name="md_theme_dark_onSecondaryContainer">#E8DEF8</color>
+    <color name="md_theme_dark_tertiary">#EFB8C8</color>
+    <color name="md_theme_dark_onTertiary">#492532</color>
+    <color name="md_theme_dark_tertiaryContainer">#633B48</color>
+    <color name="md_theme_dark_onTertiaryContainer">#FFD8E4</color>
+    <color name="md_theme_dark_error">#F2B8B5</color>
+    <color name="md_theme_dark_onError">#601410</color>
+    <color name="md_theme_dark_errorContainer">#8C1D18</color>
+    <color name="md_theme_dark_onErrorContainer">#F9DEDC</color>
+    <color name="md_theme_dark_outline">#938F99</color>
+    <color name="md_theme_dark_background_m3">#1C1B1F</color>
+    <color name="md_theme_dark_onBackground_m3">#E6E1E5</color>
+    <color name="md_theme_dark_surface_m3">#1C1B1F</color>
+    <color name="md_theme_dark_onSurface_m3">#E6E1E5</color>
+    <color name="md_theme_dark_surfaceVariant">#49454F</color>
+    <color name="md_theme_dark_onSurfaceVariant">#CAC4D0</color>
+    <color name="md_theme_dark_inverseSurface">#E6E1E5</color>
+    <color name="md_theme_dark_inverseOnSurface">#313033</color>
+    <color name="md_theme_dark_inversePrimary">#6750A4</color>
+    <color name="md_theme_dark_shadow">#000000</color>
+    <color name="md_theme_dark_surfaceTint">#D0BCFF</color>
+    <color name="md_theme_dark_outlineVariant">#49454F</color>
+    <color name="md_theme_dark_scrim">#000000</color>
+</resources>

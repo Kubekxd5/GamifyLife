@@ -156,5 +156,28 @@
             android:layout_marginBottom="16dp"
             app:layout_constraintVertical_bias="0.0"/>
 
+        <!-- NOWY WYKRES LINIOWY DLA XP -->
+        <TextView
+            android:id="@+id/textViewXpChartTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/home_xp_chart_title"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/achievementsChart" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/xpHistoryChart"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewXpChartTitle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintVertical_bias="0.0"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

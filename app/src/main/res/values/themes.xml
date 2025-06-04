@@ -1,67 +1,167 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme (Light) -->
-    <style name="Base.Theme.GamifyLife" parent="Theme.Material3.DayNight.NoActionBar"> <!-- Or Theme.MaterialComponents.DayNight.NoActionBar if using Material 2 -->
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item> <!-- For Material 2, use colorPrimaryDark for Material 3 -->
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item> <!-- For Material 2, use colorSecondaryDark for Material 3 -->
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
-        <!-- Example: Background color -->
-        <item name="android:colorBackground">@color/light_background</item>
-        <item name="colorSurface">@color/light_surface</item>
-        <item name="colorOnBackground">@color/on_light_background</item>
-        <item name="colorOnSurface">@color/on_light_surface</item>
-        <item name="android:textColorPrimary">@color/on_light_background</item>
-    </style>
 
-    <style name="Theme.GamifyLife.NoActionBar" parent="Base.Theme.GamifyLife">
-        <!-- You can add specific overrides here if this theme needs to be
-             slightly different from your base NoActionBar theme for MainActivity.
-             Often, it can be identical to Base.Theme.GamifyLife if that's already NoActionBar.
-             For example, you might want to ensure certain window features are explicitly off. -->
-        <!--
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        -->
-        <!-- Ensure your primary/secondary colors are set or inherited correctly for the Toolbar -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- ... other color attributes if needed ... -->
+    <style name="Base.Theme.GamifyLife" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="navHeaderBackground">@drawable/side_nav_bar_light_orange</item> <!-- Domyślne dla trybu jasnego -->
+        <!-- NOWA PALETA BIAŁO-POMARAŃCZOWA DLA TRYBU JASNEGO -->
+        <item name="colorPrimary">@color/orange_primary_light</item>
+        <item name="colorOnPrimary">@color/orange_onPrimary_light</item>
+        <item name="colorPrimaryContainer">@color/orange_primaryContainer_light</item>
+        <item name="colorOnPrimaryContainer">@color/orange_onPrimaryContainer_light</item>
+        <item name="colorSecondary">@color/orange_secondary_light</item>
+        <item name="colorOnSecondary">@color/orange_onSecondary_light</item>
+        <item name="colorSecondaryContainer">@color/orange_secondaryContainer_light</item>
+        <item name="colorOnSecondaryContainer">@color/orange_onSecondaryContainer_light</item>
+        <!-- Możesz dodać colorTertiary jeśli potrzebujesz -->
+
+        <item name="android:colorBackground">@color/app_background_light</item>
+        <item name="colorOnBackground">@color/app_onBackground_light</item>
+        <item name="colorSurface">@color/app_surface_light</item>
+        <item name="colorOnSurface">@color/app_onSurface_light</item>
+        <item name="colorSurfaceVariant">@color/app_surfaceVariant_light</item>
+        <item name="colorOnSurfaceVariant">@color/app_onSurfaceVariant_light</item>
+        <item name="colorOutline">@color/app_outline_light</item>
+
+        <item name="colorError">@color/md_theme_light_error</item>
+        <item name="colorOnError">@color/md_theme_light_onError</item>
+
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item> <!-- Jasny pasek, ciemne ikony -->
+
+        <item name="textAppearanceCaption">?attr/textAppearanceCaption</item>
     </style>
 
     <style name="Theme.GamifyLife" parent="Base.Theme.GamifyLife" />
+    <style name="Theme.GamifyLife.NoActionBar" parent="Theme.GamifyLife" />
 
-    <!-- Specific Theme for Light Mode -->
-    <style name="Theme.GamifyLife.Light" parent="Base.Theme.GamifyLife">
-        <!-- Override specific attributes for light theme if Base.Theme.GamifyLife isn't already purely light -->
-        <!-- This is often the same as Base.Theme.GamifyLife if DayNight isn't strictly enforced by it -->
+    <!-- Motyw explicite "Light" (biało-pomarańczowy) dla ThemeHelper -->
+    <style name="Theme.GamifyLife.Light" parent="Theme.Material3.Light.NoActionBar">
+        <item name="navHeaderBackground">@drawable/side_nav_bar_light_orange</item>
+        <item name="colorPrimary">@color/orange_primary_light</item>
+        <item name="colorOnPrimary">@color/orange_onPrimary_light</item>
+        <item name="colorPrimaryContainer">@color/orange_primaryContainer_light</item>
+        <item name="colorOnPrimaryContainer">@color/orange_onPrimaryContainer_light</item>
+        <item name="colorSecondary">@color/orange_secondary_light</item>
+        <!-- ... reszta kolorów pomarańczowych ... -->
+        <item name="android:colorBackground">@color/app_background_light</item>
+        <item name="colorSurface">@color/app_surface_light</item>
+        <item name="colorOnSurface">@color/app_onSurface_light</item>
+        <item name="colorSurfaceVariant">@color/app_surfaceVariant_light</item>
+        <item name="colorOnSurfaceVariant">@color/app_onSurfaceVariant_light</item>
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="textAppearanceCaption">?attr/textAppearanceCaption</item>
     </style>
 
-    <!-- Specific Theme for Dark Mode (can also be defined here for clarity or if not using -night folder) -->
-    <style name="Theme.GamifyLife.Dark" parent="Theme.Material3.DayNight.NoActionBar"> <!-- Or Theme.MaterialComponents.DayNight.NoActionBar -->
-        <item name="colorPrimary">@color/purple_200</item> <!-- Lighter primary for dark theme -->
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/black</item>
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item> <!-- Can be same as colorSecondary in dark -->
-        <item name="colorOnSecondary">@color/black</item>
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+    <style name="Theme.GamifyLife.Dark" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Pełna definicja kolorów dla trybu ciemnego, skopiowana z values-night/themes.xml (Base.Theme.GamifyLife) -->
+        <item name="colorPrimary">@color/md_theme_dark_primary</item>
+        <!-- ... itd. dla wszystkich kolorów md_theme_dark_ ... -->
+        <item name="android:colorBackground">@color/md_theme_dark_background_m3</item>
+        <item name="colorSurface">@color/md_theme_dark_surface_m3</item>
+        <item name="colorOnSurface">@color/md_theme_dark_onSurface_m3</item>
+        <item name="colorSurfaceVariant">@color/md_theme_dark_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_dark_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_dark_outline</item>
+        <item name="colorSurfaceContainerLowest">@color/md_theme_dark_surface_m3</item>
+        <item name="colorOutlineVariant">@color/md_theme_dark_outlineVariant</item>
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="textAppearanceCaption">?attr/textAppearanceCaption</item> <!-- Lub @style/TextAppearance.Material3.Caption -->
+    </style>
 
-        <item name="android:colorBackground">@color/dark_background</item>
-        <item name="colorSurface">@color/dark_surface</item>
+    <style name="Theme.GamifyLife.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar" />
+    <style name="Theme.GamifyLife.PopupOverlay" parent="ThemeOverlay.Material3.Light" />
+
+    <!-- Stary motyw ciemny, teraz jako Dark-Violet -->
+    <style name="Theme.GamifyLife.DarkViolet" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="navHeaderBackground">@drawable/side_nav_bar_dark_violet</item>
+        <item name="colorPrimary">@color/purple_200</item> <!-- Istniejący fioletowy ciemny -->
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorPrimaryContainer">@color/md_theme_dark_primaryContainer</item> <!-- Użyj M3 container -->
+        <item name="colorOnPrimaryContainer">@color/md_theme_dark_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="android:colorBackground">@color/dark_background_violet</item> <!-- Zdefiniuj dark_background_violet -->
+        <item name="colorSurface">@color/dark_surface_violet</item>       <!-- Zdefiniuj dark_surface_violet -->
         <item name="colorOnBackground">@color/on_dark_background</item>
         <item name="colorOnSurface">@color/on_dark_surface</item>
-        <item name="android:textColorPrimary">@color/on_dark_background</item>
+        <item name="colorSurfaceVariant">@color/md_theme_dark_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_dark_onSurfaceVariant</item>
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="textAppearanceCaption">?attr/textAppearanceCaption</item>
     </style>
 
-    <!-- For MainActivity Toolbar Overlays (if needed) -->
-    <style name="Theme.GamifyLife.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-    <style name="Theme.GamifyLife.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <!-- Nowy motyw Dark-Orange -->
+    <style name="Theme.GamifyLife.DarkOrange" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="navHeaderBackground">@drawable/side_nav_bar_dark_orange</item>
+        <item name="colorPrimary">@color/orange_primary_dark</item> <!-- Zdefiniuj orange_primary_dark -->
+        <item name="colorOnPrimary">@color/orange_onPrimary_dark</item> <!-- Zdefiniuj -->
+        <item name="colorPrimaryContainer">@color/orange_primaryContainer_dark</item> <!-- Zdefiniuj -->
+        <item name="colorOnPrimaryContainer">@color/orange_onPrimaryContainer_dark</item> <!-- Zdefiniuj -->
+        <item name="colorSecondary">@color/orange_secondary_dark</item> <!-- Zdefiniuj -->
+        <item name="colorOnSecondary">@color/orange_onSecondary_dark</item> <!-- Zdefiniuj -->
+        <item name="android:colorBackground">@color/dark_background_orange</item> <!-- Zdefiniuj -->
+        <item name="colorSurface">@color/dark_surface_orange</item>          <!-- Zdefiniuj -->
+        <item name="colorOnBackground">@color/on_dark_general</item>      <!-- Zdefiniuj ogólny jasny tekst -->
+        <item name="colorOnSurface">@color/on_dark_general</item>
+        <item name="colorSurfaceVariant">@color/dark_surface_variant_orange</item> <!-- Zdefiniuj -->
+        <item name="colorOnSurfaceVariant">@color/on_dark_surface_variant_orange</item> <!-- Zdefiniuj -->
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="textAppearanceCaption">?attr/textAppearanceCaption</item>
+    </style>
+
+    <!-- Nowy motyw Hackerman -->
+    <style name="Theme.GamifyLife.Hackerman" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="navHeaderBackground">@drawable/side_nav_bar_hackerman</item>
+        <item name="colorPrimary">@color/hacker_green_neon</item> <!-- Zdefiniuj hacker_green_neon -->
+        <item name="colorOnPrimary">@color/hacker_almost_black</item> <!-- Zdefiniuj -->
+        <item name="colorPrimaryContainer">@color/hacker_dark_green_container</item> <!-- Zdefiniuj -->
+        <item name="colorOnPrimaryContainer">@color/hacker_green_neon</item>
+        <item name="colorSecondary">@color/hacker_grey_button</item> <!-- Zdefiniuj ciemnoszary dla przycisków -->
+        <item name="colorOnSecondary">@color/hacker_green_neon</item>
+        <item name="android:colorBackground">@color/hacker_almost_black</item>
+        <item name="colorSurface">@color/hacker_dark_surface</item> <!-- Bardzo ciemna powierzchnia -->
+        <item name="colorOnBackground">@color/hacker_green_neon</item>
+        <item name="colorOnSurface">@color/hacker_green_neon</item>
+        <item name="colorSurfaceVariant">@color/hacker_darker_grey</item> <!-- Ciemniejszy szary dla wariantów -->
+        <item name="colorOnSurfaceVariant">@color/hacker_light_grey_text</item> <!-- Jasnoszary tekst -->
+        <item name="colorOutline">@color/hacker_grey_button</item>
+        <item name="android:statusBarColor">@color/hacker_almost_black</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="textAppearanceCaption">?attr/textAppearanceCaption</item>
+        <item name="android:buttonStyle">@style/Widget.GamifyLife.HackermanButton</item> <!-- Własny styl przycisków -->
+    </style>
+
+    <!-- Własny styl przycisków dla motywu Hackerman -->
+    <style name="Widget.GamifyLife.HackermanButton" parent="Widget.Material3.Button">
+        <item name="android:backgroundTint">@color/hacker_grey_button</item>
+        <item name="android:textColor">@color/hacker_green_neon</item>
+        <!-- Możesz dodać inne atrybuty, np. shapeAppearance -->
+    </style>
+
+    <!-- Motyw widgetu - teraz może być bardziej generyczny, bo kolory będą dziedziczone -->
+    <style name="Theme.GamifyLife.Widget" parent="Theme.Material3.DayNight">
+        <item name="colorSurfaceContainerLowest">?attr/colorSurfaceContainerLowest</item>
+        <item name="colorOnSurface">?attr/colorOnSurface</item>
+        <item name="colorOnSurfaceVariant">?attr/colorOnSurfaceVariant</item>
+        <item name="colorOutlineVariant">?attr/colorOutlineVariant</item>
+        <item name="textAppearanceCaption">?attr/textAppearanceCaption</item>
+    </style>
+
+    <style name="Widget.GamifyLife.TextView.Title" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/widget_text_primary_color</item> <!-- Użyj kolorów zdefiniowanych dla widgetu -->
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.GamifyLife.TextView.Content" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/widget_text_secondary_color</item>
+    </style>
+
+    <style name="Widget.GamifyLife.TextView.Caption" parent="TextAppearance.AppCompat.Caption"> <!-- AppCompat.Caption powinno być dostępne -->
+        <item name="android:textColor">@color/widget_text_secondary_color</item>
+        <item name="android:alpha">0.8</item>
+        <item name="android:textSize">12sp</item> <!-- Możesz dostosować, jeśli Caption jest za mały -->
+    </style>
 </resources>

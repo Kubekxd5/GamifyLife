@@ -210,4 +210,56 @@
 
     <!-- Upewnij się, że masz też string dla menu, jeśli go używasz -->
     <string name="menu_change_theme">Zmień motyw</string>
+
+    <string name="icon_name_finance">Finanse</string>   <!-- NOWA -->
+    <string name="icon_name_health">Zdrowie</string>    <!-- NOWA -->
+    <string name="icon_name_hobby">Hobby</string>     <!-- NOWA -->
+    <string name="icon_name_work">Praca</string>      <!-- NOWA -->
+    <string name="icon_name_study">Nauka</string>     <!-- NOWA -->
+    <string name="icon_name_gaming">Granie</string>
+
+    <string name="widget_title_achievements_today">Dzisiejsze Osiągnięcia</string>
+    <string name="widget_title_user_achievements">Osiągnięcia %1$s</string>
+    <string name="widget_please_log_in">Zaloguj się, aby zobaczyć zadania!</string>
+    <string name="widget_data_error">Nie można załadować danych.</string>
+    <string name="widget_last_updated">Aktual.: %1$s</string>
+
+    <plurals name="widget_pending_achievements">
+        <item quantity="one">%d oczekujące osiągnięcie</item>
+        <item quantity="few">%d oczekujące osiągnięcia</item>
+        <item quantity="many">%d oczekujących osiągnięć</item>
+        <item quantity="other">%d oczekujących osiągnięć</item>
+    </plurals>
+
+    <string name="nav_header_loading_nickname">Ładowanie nazwy…</string>
+    <string name="nav_header_default_nickname">Użytkownik</string>
+
+    <string name="theme_dark_violet">Ciemny Fiolet</string>
+    <string name="theme_dark_orange">Ciemny Pomarańcz</string>
+    <string name="theme_hackerman">Tryb Hakera</string>
+
+    <string name="delete_achievement_button_cd">Usuń osiągnięcie</string>
+    <string name="dialog_delete_achievement_title">Usunąć osiągnięcie?</string>
+    <string name="dialog_delete_achievement_message">Czy na pewno chcesz usunąć osiągnięcie „%1$s”? Tej akcji nie można cofnąć, a powiązane PD zostaną odjęte.</string>
+    <string name="delete_button_text">Usuń</string>
+    <string name="achievement_deleted_toast">Osiągnięcie usunięte.</string>
+    <string name="failed_to_delete_achievement">Nie udało się usunąć osiągnięcia.</string>
+    <string name="pdf_title_my_achievements">Moje Osiągnięcia - GamifyLife</string>
+    <string name="pdf_title_my_achievements_cont">Moje Osiągnięcia (Ciąg dalszy)</string>
+    <string name="pdf_status_completed">Ukończono</string>
+    <string name="pdf_status_pending">Oczekujące</string>
+    <string name="pdf_target_date_label">Cel: </string>
+    <string name="pdf_done_on_label">Ukończono: </string>
+    <string name="pdf_xp_label">PD: </string>
+    <string name="pdf_share_chooser_title">Udostępnij PDF z osiągnięciami przez</string>
+    <string name="no_achievements_to_export">Brak osiągnięć do wyeksportowania.</string>
+    <string name="failed_to_create_pdf">Nie udało się utworzyć pliku PDF.</string>
+    <string name="error_generating_pdf">Błąd generowania PDF: %1$s</string>
+    <string name="error_sharing_pdf_general">Błąd: Nie znaleziono pliku PDF do udostępnienia.</string>
+    <string name="no_app_to_share_pdf">Nie znaleziono aplikacji do udostępnienia PDF.</string>
+    <string name="exporting_to_pdf_toast">Eksportowanie do PDF…</string>
+    <string name="list_item_xp_label">%d PD</string>
+    <string name="home_xp_chart_title">Zdobyte PD dziennie (Ost. 7 dni)</string>
+    <string name="home_xp_chart_legend">Zdobyte PD</string>
+
 </resources>

@@ -1,6 +1,5 @@
 package com.example.gamifylife;
 
-import android.graphics.Color; // Potrzebne dla kolorów wykresu
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -22,11 +21,9 @@ import androidx.fragment.app.Fragment;
 
 import com.example.gamifylife.helpers.LocaleHelper;
 import com.example.gamifylife.models.UserProfile;
-import com.example.gamifylife.ui.home.AchievementCountMarkerView;
 import com.example.gamifylife.util.LevelUtils;
 
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -34,24 +31,25 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.charts.LineChart; // Nowy import
+import com.github.mikephil.charting.data.Entry;       // Dla LineChart
+import com.github.mikephil.charting.data.LineData;    // Dla LineChart
+import com.github.mikephil.charting.data.LineDataSet; // Dla LineChart
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet; // Dla LineChart
 
 import com.google.firebase.Timestamp; // Dla pola completedAt
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query; // Dla Query.Direction
-import com.google.firebase.firestore.DocumentSnapshot; // Zmień QueryDocumentSnapshot na DocumentSnapshot tutaj, jeśli potrzebne
 import com.google.firebase.firestore.QueryDocumentSnapshot; // Ten może pozostać, jeśli używasz go gdzie indziej
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -72,6 +70,7 @@ public class HomeFragment extends Fragment {
     private ProgressBar progressBarXP, progressBarHome;
     private ImageButton buttonEditNickname;
     private BarChart achievementsChart; // Wykres
+    private LineChart xpHistoryChart;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -101,6 +100,7 @@ public class HomeFragment extends Fragment {
         textViewAccountCreatedValue = view.findViewById(R.id.textViewAccountCreatedValue);
         progressBarHome = view.findViewById(R.id.progressBarHome);
         achievementsChart = view.findViewById(R.id.achievementsChart); // Inicjalizacja wykresu
+        xpHistoryChart = view.findViewById(R.id.xpHistoryChart);
 
         if (currentUser == null) {
             Toast.makeText(getContext(), "User not logged in.", Toast.LENGTH_LONG).show();
@@ -236,7 +236,7 @@ public class HomeFragment extends Fragment {
                 });
     }
 
-    private void loadChartData() {
+    private void loadBarChartData() {
         if (currentUser == null || db == null || getContext() == null) {
             Log.w(TAG, "Cannot load chart data: user, db, or context is null.");
             if (achievementsChart != null) {
@@ -278,7 +278,7 @@ public class HomeFragment extends Fragment {
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) { // Iteruj po QuerySnapshot
                         documents.add(doc);
                     }
-                    processChartData(documents); // Przekaż List<QueryDocumentSnapshot>
+                    processBarChartData(documents); // Przekaż List<QueryDocumentSnapshot>
                 })
                 .addOnFailureListener(e -> {
                     if (!isAdded() || getContext() == null) {
@@ -294,7 +294,7 @@ public class HomeFragment extends Fragment {
                 });
     }
 
-    private void processChartData(List<QueryDocumentSnapshot> documents) {
+    private void processBarChartData(List<QueryDocumentSnapshot> documents) {
         Log.d(TAG, "processChartData: Processing " + documents.size() + " documents.");
         Map<String, Integer> dailyCounts = new HashMap<>();
         final ArrayList<String> xLabels = new ArrayList<>();
@@ -337,10 +337,10 @@ public class HomeFragment extends Fragment {
             chartEntries.add(new BarEntry(i, dailyCounts.getOrDefault(dayLabel, 0)));
         }
 
-        setupAndDisplayChart(chartEntries, xLabels);
+        setupAndDisplayBarChart(chartEntries, xLabels);
     }
 
-    private void setupAndDisplayChart(ArrayList<BarEntry> chartEntries, final ArrayList<String> xLabels) {
+    private void setupAndDisplayBarChart(ArrayList<BarEntry> chartEntries, final ArrayList<String> xLabels) {
         if (achievementsChart == null || getContext() == null || chartEntries.isEmpty()) {
             Log.w(TAG, "setupAndDisplayChart: Chart, context, or entries null/empty. Clearing chart.");
             if (achievementsChart != null) {
@@ -354,10 +354,10 @@ public class HomeFragment extends Fragment {
 
         BarDataSet dataSet = new BarDataSet(chartEntries, getString(R.string.home_chart_legend_completed));
 
-        // Użyj swoich istniejących kolorów lub generycznych nazw zdefiniowanych w values/ i values-night/
-        // Przykład z użyciem Twoich istniejących "podstawowych" kolorów:
-        dataSet.setColor(ContextCompat.getColor(getContext(), R.color.purple_500)); // Twój główny kolor
-        dataSet.setValueTextColor(ContextCompat.getColor(getContext(), R.color.on_light_surface)); // Kolor tekstu na jasnym tle
+        // Użyj semantycznych nazw kolorów
+        dataSet.setColor(ContextCompat.getColor(getContext(), R.color.chart_bar_color));
+        dataSet.setValueTextColor(ContextCompat.getColor(getContext(), R.color.chart_text_color));
+        dataSet.setValueTextSize(10f);
 
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(dataSet);
@@ -367,7 +367,7 @@ public class HomeFragment extends Fragment {
         achievementsChart.setData(barData);
         achievementsChart.getDescription().setEnabled(false);
         achievementsChart.getLegend().setEnabled(true);
-        achievementsChart.getLegend().setTextColor(ContextCompat.getColor(getContext(), R.color.on_light_surface)); // Kolor tekstu na jasnym tle
+        achievementsChart.getLegend().setTextColor(ContextCompat.getColor(getContext(), R.color.chart_text_color)); // Użyj semantycznego koloru
 
         achievementsChart.setDrawGridBackground(false);
         achievementsChart.setFitBars(true);
@@ -380,9 +380,9 @@ public class HomeFragment extends Fragment {
         XAxis xAxis = achievementsChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
-        xAxis.setTextColor(ContextCompat.getColor(getContext(), R.color.on_light_surface)); // Kolor tekstu na jasnym tle
+        xAxis.setTextColor(ContextCompat.getColor(getContext(), R.color.chart_text_color)); // Użyj semantycznego koloru
         xAxis.setGranularity(1f);
-        xAxis.setLabelCount(xLabels.size());
+        xAxis.setLabelCount(xLabels.size(), false); // false, aby wymusić liczbę etykiet
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
@@ -396,10 +396,8 @@ public class HomeFragment extends Fragment {
 
         YAxis leftAxis = achievementsChart.getAxisLeft();
         leftAxis.setDrawGridLines(true);
-        // Dla koloru siatki możesz zdefiniować nowy, np. light_grey
-        // <color name="light_grey_grid">#D3D3D3</color> w colors.xml
-        leftAxis.setGridColor(ContextCompat.getColor(getContext(), R.color.md_theme_light_surfaceVariant)); // Lub np. R.color.light_grey_grid
-        leftAxis.setTextColor(ContextCompat.getColor(getContext(), R.color.on_light_surface)); // Kolor tekstu na jasnym tle
+        leftAxis.setGridColor(ContextCompat.getColor(getContext(), R.color.chart_grid_line_color)); // Użyj semantycznego koloru
+        leftAxis.setTextColor(ContextCompat.getColor(getContext(), R.color.chart_text_color)); // Użyj semantycznego koloru
         leftAxis.setAxisMinimum(0f);
         leftAxis.setGranularity(1f);
         leftAxis.setLabelCount(6, false);
@@ -407,15 +405,178 @@ public class HomeFragment extends Fragment {
         achievementsChart.getAxisRight().setEnabled(false);
 
         // Marker (jeśli używasz)
-        AchievementCountMarkerView mv = new AchievementCountMarkerView(getContext(), R.layout.marker_view_achievements);
-        mv.setChartView(achievementsChart);
-        achievementsChart.setMarker(mv);
+        if (getContext() != null) { // Dodatkowe sprawdzenie kontekstu dla MarkerView
+            AchievementCountMarkerView mv = new AchievementCountMarkerView(getContext(), R.layout.marker_view_achievements);
+            mv.setChartView(achievementsChart);
+            achievementsChart.setMarker(mv);
+        }
 
         achievementsChart.animateY(1200);
         achievementsChart.invalidate();
         Log.d(TAG, "setupAndDisplayChart: Chart invalidated.");
     }
 
+    private void loadXpHistoryChartData() {
+        if (currentUser == null || db == null || getContext() == null) {
+            Log.w(TAG, "Cannot load XP history chart data: user, db, or context is null.");
+            if (xpHistoryChart != null) {
+                xpHistoryChart.clear();
+                xpHistoryChart.setNoDataText(getString(R.string.no_chart_data_available));
+                xpHistoryChart.invalidate();
+            }
+            return;
+        }
+        Log.d(TAG, "loadXpHistoryChartData: Fetching completed achievements for XP history (last 7 days).");
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_YEAR, -6); // Ostatnie 7 dni
+        cal.set(Calendar.HOUR_OF_DAY, 0); cal.set(Calendar.MINUTE, 0); cal.set(Calendar.SECOND, 0); cal.set(Calendar.MILLISECOND, 0);
+        Date sevenDaysAgo = cal.getTime();
+
+        db.collection("users").document(currentUser.getUid()).collection("achievements")
+                .whereEqualTo("completed", true)
+                .whereGreaterThanOrEqualTo("completedAt", sevenDaysAgo) // Filtrujemy po dacie ukończenia
+                .orderBy("completedAt", Query.Direction.ASCENDING)      // Potrzebne do poprawnego grupowania po dniach
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!isAdded() || getContext() == null) return;
+                    Log.d(TAG, "loadXpHistoryChartData: Successfully fetched " + queryDocumentSnapshots.size() + " completed achievements for XP chart.");
+                    processXpHistoryData(queryDocumentSnapshots.getDocuments());
+                })
+                .addOnFailureListener(e -> {
+                    if (!isAdded() || getContext() == null) return;
+                    Log.e(TAG, "loadXpHistoryChartData: Error fetching data", e);
+                    Toast.makeText(getContext(), getString(R.string.error_loading_chart_data), Toast.LENGTH_SHORT).show();
+                    if (xpHistoryChart != null) {
+                        xpHistoryChart.clear();
+                        xpHistoryChart.invalidate();
+                    }
+                });
+    }
+
+    private void processXpHistoryData(List<DocumentSnapshot> documents) {
+        Log.d(TAG, "processXpHistoryData: Processing " + documents.size() + " documents for XP chart.");
+        Map<String, Integer> dailyXpSum = new HashMap<>(); // Klucz: "EEE" (np. Mon), Wartość: suma XP
+        final ArrayList<String> xLabels = new ArrayList<>(); // Etykiety dla osi X (dni tygodnia)
+        SimpleDateFormat dayFormat = new SimpleDateFormat("EEE", LocaleHelper.getLanguage(getContext()).equals("pl") ? new Locale("pl", "PL") : Locale.getDefault());
+        SimpleDateFormat fullDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()); // Do debugowania kluczy mapy
+
+        Calendar cal = Calendar.getInstance();
+        // Inicjalizuj ostatnie 7 dni na osi X i w mapie sum XP
+        for (int i = 6; i >= 0; i--) { // Od najstarszego do dzisiaj
+            cal.setTime(new Date());
+            cal.add(Calendar.DAY_OF_YEAR, -i);
+            String dayLabel = dayFormat.format(cal.getTime());
+            String fullDateKey = fullDateFormat.format(cal.getTime()); // Użyj pełnej daty jako klucza dla sum XP
+            xLabels.add(dayLabel); // Etykieta dla osi X
+            dailyXpSum.put(fullDateKey, 0); // Inicjuj sumę XP dla tego dnia
+        }
+        Log.d(TAG, "processXpHistoryData: Initialized xLabels: " + xLabels + ", initial dailyXpSum keys: " + dailyXpSum.keySet());
+
+        // Sumuj XP dla każdego dnia
+        for (DocumentSnapshot doc : documents) {
+            Timestamp completedTimestamp = doc.getTimestamp("completedAt");
+            if (completedTimestamp != null) {
+                Date completedDate = completedTimestamp.toDate();
+                String fullDateKey = fullDateFormat.format(completedDate); // Klucz do mapy sum XP
+                int xpValue = doc.getLong("xpValue") != null ? doc.getLong("xpValue").intValue() : 0;
+
+                if (dailyXpSum.containsKey(fullDateKey)) {
+                    dailyXpSum.put(fullDateKey, dailyXpSum.get(fullDateKey) + xpValue);
+                } else {
+                    // To nie powinno się zdarzyć, jeśli zakres dat zapytania i inicjalizacji jest spójny
+                    Log.w(TAG, "processXpHistoryData: Date key " + fullDateKey + " not found in dailyXpSum map. This might indicate data outside the 7-day range from query.");
+                }
+            }
+        }
+        Log.d(TAG, "processXpHistoryData: Final daily XP sums: " + dailyXpSum);
+
+        // Przygotuj wpisy do wykresu liniowego
+        ArrayList<Entry> chartEntries = new ArrayList<>();
+        // Iteruj po dniach, dla których mamy etykiety, aby zachować kolejność
+        cal.setTime(new Date()); // Zresetuj kalendarz do dzisiaj
+        cal.add(Calendar.DAY_OF_YEAR, -6); // Zacznij od 6 dni temu
+
+        for (int i = 0; i < xLabels.size(); i++) { // xLabels ma 7 elementów
+            String fullDateKey = fullDateFormat.format(cal.getTime());
+            int totalXpForDay = dailyXpSum.getOrDefault(fullDateKey, 0);
+            chartEntries.add(new Entry(i, totalXpForDay)); // i to indeks (0-6), totalXpForDay to wartość Y
+            cal.add(Calendar.DAY_OF_YEAR, 1); // Przejdź do następnego dnia
+        }
+
+        setupAndDisplayXpHistoryChart(chartEntries, xLabels);
+    }
+
+    private void setupAndDisplayXpHistoryChart(ArrayList<Entry> chartEntries, final ArrayList<String> xLabels) {
+        if (xpHistoryChart == null || getContext() == null || chartEntries.isEmpty()) {
+            Log.w(TAG, "setupAndDisplayXpHistoryChart: Chart, context, or entries null/empty. Clearing chart.");
+            if (xpHistoryChart != null) {
+                xpHistoryChart.clear();
+                xpHistoryChart.setNoDataText(getString(R.string.no_chart_data_available));
+                xpHistoryChart.invalidate();
+            }
+            return;
+        }
+        Log.d(TAG, "setupAndDisplayXpHistoryChart: Setting up XP chart with " + chartEntries.size() + " entries.");
+
+        LineDataSet dataSet = new LineDataSet(chartEntries, getString(R.string.home_xp_chart_legend));
+        dataSet.setColor(ContextCompat.getColor(getContext(), R.color.teal_700)); // Inny kolor dla odróżnienia
+        dataSet.setCircleColor(ContextCompat.getColor(getContext(), R.color.teal_200));
+        dataSet.setLineWidth(2f);
+        dataSet.setCircleRadius(4f);
+        dataSet.setDrawCircleHole(false);
+        dataSet.setValueTextSize(10f);
+        dataSet.setValueTextColor(ContextCompat.getColor(getContext(), R.color.chart_text_color)); // Użyj semantycznego koloru
+        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER); // Wygładzona linia
+        dataSet.setDrawFilled(true); // Wypełnienie pod linią
+        dataSet.setFillColor(ContextCompat.getColor(getContext(), R.color.teal_200));
+        dataSet.setFillAlpha(100);
+
+
+        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+        dataSets.add(dataSet);
+        LineData lineData = new LineData(dataSets);
+
+        xpHistoryChart.setData(lineData);
+        xpHistoryChart.getDescription().setEnabled(false);
+        xpHistoryChart.getLegend().setTextColor(ContextCompat.getColor(getContext(), R.color.chart_text_color));
+
+        xpHistoryChart.setTouchEnabled(true);
+        xpHistoryChart.setDragEnabled(true);
+        xpHistoryChart.setScaleEnabled(true);
+        xpHistoryChart.setPinchZoom(true);
+        xpHistoryChart.setDrawGridBackground(false);
+
+        XAxis xAxis = xpHistoryChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setTextColor(ContextCompat.getColor(getContext(), R.color.chart_text_color));
+        xAxis.setGranularity(1f);
+        xAxis.setLabelCount(xLabels.size(), false);
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                int index = (int) value;
+                if (index >= 0 && index < xLabels.size()) {
+                    return xLabels.get(index);
+                }
+                return "";
+            }
+        });
+
+        YAxis leftAxis = xpHistoryChart.getAxisLeft();
+        leftAxis.setTextColor(ContextCompat.getColor(getContext(), R.color.chart_text_color));
+        leftAxis.setDrawGridLines(true);
+        leftAxis.setGridColor(ContextCompat.getColor(getContext(), R.color.chart_grid_line_color));
+        leftAxis.setAxisMinimum(0f); // XP nie może być ujemne
+        leftAxis.setGranularity(1f); // Dla XP może być potrzebna większa granularność lub automatyczna
+
+        xpHistoryChart.getAxisRight().setEnabled(false);
+
+        xpHistoryChart.animateX(1000); // Animacja osi X
+        xpHistoryChart.invalidate();
+        Log.d(TAG, "setupAndDisplayXpHistoryChart: XP History Chart invalidated.");
+    }
 
     @Override
     public void onStart() {
@@ -423,16 +584,19 @@ public class HomeFragment extends Fragment {
         Log.d(TAG, "onStart called in HomeFragment");
         if (currentUser != null) {
             loadUserProfile();
-            loadChartData(); // Załaduj dane wykresu
+            loadBarChartData(); // Zmień nazwę dla jasności
+            loadXpHistoryChartData(); // NOWA METODA
         } else {
-            Log.w(TAG, "User is null in onStart, cannot load profile or chart data.");
-            if (getContext() != null) {
-                Toast.makeText(getContext(), getString(R.string.user_not_signed_in), Toast.LENGTH_SHORT).show(); // Dodaj string
-            }
-            if (achievementsChart != null) { // Wyczyść wykres, jeśli użytkownik nie jest zalogowany
+            // ... (obsługa braku użytkownika)
+            if (achievementsChart != null) {
                 achievementsChart.clear();
-                achievementsChart.setNoDataText(getString(R.string.log_in_to_see_chart)); // Dodaj string
+                achievementsChart.setNoDataText(getString(R.string.log_in_to_see_chart));
                 achievementsChart.invalidate();
+            }
+            if (xpHistoryChart != null) { // Wyczyść też nowy wykres
+                xpHistoryChart.clear();
+                xpHistoryChart.setNoDataText(getString(R.string.log_in_to_see_chart));
+                xpHistoryChart.invalidate();
             }
         }
     }

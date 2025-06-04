@@ -1,35 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/widget_root_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/widget_background"
-    android:padding="16dp">
-
-    <TextView
-    android:id="@+id/widget_title_textview"
-    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="@string/widget_title_default"
-        android:textSize="18sp"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textStyle="bold" />
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:padding="16dp"
+    app:strokeColor="@color/black"
+    app:strokeWidth="5dp"
+    android:theme="@style/Theme.GamifyLife.Widget">
 
     <TextView
-    android:id="@+id/widget_content_textview"
-    android:layout_width="wrap_content"
+        android:id="@+id/widget_title_textview"
+        style="@style/Widget.GamifyLife.TextView.Title"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:maxLines="2"
+    android:ellipsize="end"
+    tools:text="PanTester's Achievements Today" />
+
+    <TextView
+        android:id="@+id/widget_content_textview"
+        style="@style/Widget.GamifyLife.TextView.Content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp"
+    android:maxLines="2"
+    android:ellipsize="end"
+    tools:text="3 pending achievements waiting for you to complete them!" />
+
+    <TextView
+        android:id="@+id/widget_empty_textview"
+        style="@style/Widget.GamifyLife.TextView.Content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp"
+    android:visibility="gone"
+    tools:text="Log in to see your tasks!"
+    tools:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/widget_last_updated_textview"
+        style="@style/Widget.GamifyLife.TextView.Caption"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
-    android:text="@string/widget_content_default"
-        android:textSize="14sp"
-        android:textColor="?android:attr/textColorSecondary" />
-
-    <Button
-    android:id="@+id/widget_open_app_button"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="12dp"
-    android:layout_gravity="center_horizontal"
-    android:text="@string/widget_open_app" />
+    android:gravity="end"
+    tools:text="Updated: 10:30 AM" />
 </LinearLayout>

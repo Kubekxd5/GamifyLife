@@ -5,72 +5,90 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
+import android.util.Log; // Dodaj logowanie
+import android.view.View;
 import android.widget.RemoteViews;
-import android.os.Build; // Potrzebne dla flag PendingIntent
+import com.example.gamifylife.util.WidgetConstants; // Import
 
 public class GamifyLifeWidgetProvider extends AppWidgetProvider {
 
-    // Metoda do aktualizacji pojedynczego widżetu
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId) {
+    private static final String TAG = "GamifyWidgetProvider"; // Tag dla logów
 
-        // Tutaj pobierzesz dane, np. z SharedPreferences, bazy danych (SQLite/Room) lub Firebase.
-        // Na razie użyjemy statycznego tekstu.
-        CharSequence widgetTitle = context.getString(R.string.widget_title_dynamic); // Stwórz ten string
-        CharSequence widgetContent = context.getString(R.string.widget_content_example, 5); // Stwórz ten string (np. "5 active achievements")
-
-        // Stwórz RemoteViews, aby ustawić widoki w layoucie widżetu
+    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+        Log.d(TAG, "updateAppWidget called for widget ID: " + appWidgetId);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.gamifylife_widget_layout);
-        views.setTextViewText(R.id.widget_title_textview, widgetTitle);
-        views.setTextViewText(R.id.widget_content_textview, widgetContent);
 
-        // Ustawienie PendingIntent do otwierania MainActivity po kliknięciu przycisku
-        Intent intentOpenApp = new Intent(context, LoginActivity.class); // Zawsze zaczynamy od LoginActivity, która przekieruje do Main jeśli zalogowany
+        SharedPreferences prefs = context.getSharedPreferences(WidgetConstants.PREFS_WIDGET_DATA, Context.MODE_PRIVATE);
+        String userId = prefs.getString(WidgetConstants.KEY_LAST_USER_ID, null);
+        String nickname = prefs.getString(WidgetConstants.KEY_USER_NICKNAME_FOR_WIDGET, "");
+        int pendingTasksCount = prefs.getInt(WidgetConstants.KEY_TODAY_PENDING_ACHIEVEMENTS_COUNT, -1); // -1 jako domyślny/błąd
+
+        Log.d(TAG, "Widget data read: UserID=" + userId + ", Nickname=" + nickname + ", Tasks=" + pendingTasksCount);
+
+        if (userId != null) { // Użytkownik jest/był zalogowany
+            String titleText = nickname.isEmpty() ? context.getString(R.string.widget_title_achievements_today)
+                    : context.getString(R.string.widget_title_user_achievements, nickname);
+            views.setTextViewText(R.id.widget_title_textview, titleText);
+
+            if (pendingTasksCount >= 0) {
+                views.setTextViewText(R.id.widget_content_textview,
+                        context.getResources().getQuantityString(R.plurals.widget_pending_achievements, pendingTasksCount, pendingTasksCount));
+                views.setViewVisibility(R.id.widget_empty_textview, View.GONE);
+                views.setViewVisibility(R.id.widget_content_textview, View.VISIBLE);
+            } else if (pendingTasksCount == -1) { // Błąd pobierania danych
+                views.setTextViewText(R.id.widget_empty_textview, context.getString(R.string.widget_data_error));
+                views.setViewVisibility(R.id.widget_empty_textview, View.VISIBLE);
+                views.setViewVisibility(R.id.widget_content_textview, View.GONE);
+            }
+            views.setTextViewText(R.id.widget_last_updated_textview,
+                    context.getString(R.string.widget_last_updated,
+                            new java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(new java.util.Date())));
+
+        } else { // Nikt nie jest zalogowany lub brak danych
+            views.setTextViewText(R.id.widget_title_textview, context.getString(R.string.app_name));
+            views.setTextViewText(R.id.widget_empty_textview, context.getString(R.string.widget_please_log_in));
+            views.setViewVisibility(R.id.widget_empty_textview, View.VISIBLE);
+            views.setViewVisibility(R.id.widget_content_textview, View.GONE);
+            views.setTextViewText(R.id.widget_last_updated_textview, "");
+        }
+
+
+        // Intent do otwierania aplikacji
+        Intent intentOpenApp = new Intent(context, LoginActivity.class);
         intentOpenApp.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
         int flags = PendingIntent.FLAG_UPDATE_CURRENT;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             flags |= PendingIntent.FLAG_IMMUTABLE;
         }
         PendingIntent pendingIntentOpenApp = PendingIntent.getActivity(context, appWidgetId, intentOpenApp, flags);
-        views.setOnClickPendingIntent(R.id.widget_open_app_button, pendingIntentOpenApp);
+        views.setOnClickPendingIntent(R.id.widget_root_layout, pendingIntentOpenApp); // Kliknięcie na cały widget
 
-        // Ustawienie PendingIntent do otwierania MainActivity po kliknięciu na cały widżet (opcjonalnie)
-        // Ten sam intent co wyżej, ale dla innego ID
-        PendingIntent pendingIntentWidgetClick = PendingIntent.getActivity(context, appWidgetId + 1000, intentOpenApp, flags); // Inne requestCode
-        views.setOnClickPendingIntent(R.id.widget_root_layout, pendingIntentWidgetClick);
+        // Usunięcie przycisku, jeśli go nie ma w nowym layoucie
+        // views.setOnClickPendingIntent(R.id.widget_open_app_button, pendingIntentOpenApp);
 
-
-        // Poinformuj AppWidgetManager, aby zaktualizował widżet
         appWidgetManager.updateAppWidget(appWidgetId, views);
+        Log.d(TAG, "Widget ID " + appWidgetId + " updated.");
     }
 
-    // Wywoływane, gdy widżet jest aktualizowany (np. co updatePeriodMillis lub ręcznie)
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        // Zaktualizuj wszystkie instancje tego widżetu
+        Log.d(TAG, "onUpdate called for " + appWidgetIds.length + " widgets.");
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
     }
 
-    // Wywoływane, gdy widżet jest pierwszy raz dodawany na ekran
     @Override
     public void onEnabled(Context context) {
-        // Możesz tutaj uruchomić np. AlarmManager do regularnych aktualizacji, jeśli potrzebujesz
-        // bardziej precyzyjnej kontroli niż updatePeriodMillis
+        Log.d(TAG, "onEnabled: Widget provider enabled.");
+        // Możesz tu zainicjować jakieś zadanie w tle, jeśli potrzebujesz bardziej regularnych aktualizacji
+        // np. za pomocą WorkManager, aby co jakiś czas wywoływać triggerWidgetUpdate() z aplikacji głównej.
     }
 
-    // Wywoływane, gdy ostatnia instancja widżetu jest usuwana
     @Override
     public void onDisabled(Context context) {
-        // Możesz tutaj anulować AlarmManager, jeśli go używałeś
-    }
-
-    // Wywoływane, gdy widżet jest usuwany z ekranu
-    @Override
-    public void onDeleted(Context context, int[] appWidgetIds) {
-        super.onDeleted(context, appWidgetIds);
-        // Możesz tutaj posprzątać zasoby związane z usuniętymi widżetami (np. z SharedPreferences)
+        Log.d(TAG, "onDisabled: Widget provider disabled.");
     }
 }

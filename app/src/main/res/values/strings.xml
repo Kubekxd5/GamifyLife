@@ -212,4 +212,55 @@
 
     <!-- Upewnij się, że masz też string dla menu, jeśli go używasz -->
     <string name="menu_change_theme">Change Theme</string>
+
+    <string name="icon_name_finance">Finance</string>   <!-- NOWA -->
+    <string name="icon_name_health">Health</string>    <!-- NOWA -->
+    <string name="icon_name_hobby">Hobby</string>     <!-- NOWA -->
+    <string name="icon_name_work">Work</string>      <!-- NOWA -->
+    <string name="icon_name_study">Study</string>     <!-- NOWA -->
+    <string name="icon_name_gaming">Gaming</string>
+
+
+    <string name="widget_title_achievements_today">Today\'s Achievements</string>
+    <string name="widget_title_user_achievements">%1$s\'s Achievements</string>
+    <string name="widget_please_log_in">Log in to see your tasks!</string>
+    <string name="widget_data_error">Could not load data.</string>
+    <string name="widget_last_updated">Updated: %1$s</string>
+
+    <plurals name="widget_pending_achievements">
+        <item quantity="one">%d pending achievement</item>
+        <item quantity="other">%d pending achievements</item>
+    </plurals>
+
+    <string name="nav_header_loading_nickname">Loading name…</string>
+    <string name="nav_header_default_nickname">User</string>
+
+    <string name="theme_dark_violet">Dark Violet</string>
+    <string name="theme_dark_orange">Dark Orange</string>
+    <string name="theme_hackerman">Hackerman</string>
+
+    <string name="delete_achievement_button_cd">Delete achievement</string>
+    <string name="dialog_delete_achievement_title">Delete Achievement?</string>
+    <string name="dialog_delete_achievement_message">Are you sure you want to delete the achievement \"%1$s\"? This action cannot be undone and associated XP will be removed.</string>
+    <string name="delete_button_text">Delete</string>
+    <string name="achievement_deleted_toast">Achievement deleted.</string>
+    <string name="failed_to_delete_achievement">Failed to delete achievement.</string>
+    <string name="pdf_title_my_achievements">My Achievements - GamifyLife</string>
+    <string name="pdf_title_my_achievements_cont">My Achievements (Continued)</string>
+    <string name="pdf_status_completed">Completed</string>
+    <string name="pdf_status_pending">Pending</string>
+    <string name="pdf_target_date_label">Target: </string>
+    <string name="pdf_done_on_label">Done on: </string>
+    <string name="pdf_xp_label">XP: </string>
+    <string name="pdf_share_chooser_title">Share Achievements PDF via</string>
+    <string name="no_achievements_to_export">No achievements to export.</string>
+    <string name="failed_to_create_pdf">Failed to create PDF file.</string>
+    <string name="error_generating_pdf">Error generating PDF: %1$s</string>
+    <string name="error_sharing_pdf_general">Error: PDF file not found for sharing.</string>
+    <string name="no_app_to_share_pdf">No app found to share PDF.</string>
+    <string name="exporting_to_pdf_toast">Exporting to PDF…</string>
+    <string name="list_item_xp_label">%d XP</string>
+    <string name="home_xp_chart_title">Daily XP Gained (Last 7 Days)</string>
+    <string name="home_xp_chart_legend">XP Gained</string>
+
 </resources>

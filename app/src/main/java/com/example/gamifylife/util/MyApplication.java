@@ -1,21 +1,19 @@
-package com.example.gamifylife;
+package com.example.gamifylife.util;
 
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration; // For onConfigurationChanged
 
-import android.app.Application;
 import android.app.NotificationChannel; // Import
 import android.app.NotificationManager; // Import
-import android.content.Context;
-import android.graphics.Color; // Import (opcjonalnie dla LED)
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build; // Import
 import android.util.Log;
 
+import com.example.gamifylife.NotificationSettingsActivity;
 import com.example.gamifylife.helpers.LocaleHelper;
 import com.example.gamifylife.helpers.ThemeHelper;
 import com.google.android.gms.ads.MobileAds;

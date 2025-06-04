@@ -6,7 +6,7 @@ import com.google.firebase.firestore.ServerTimestamp;
 import java.util.Date;
 
 public class Achievement {
-    @DocumentId // <<-- DODAJ TĘ ADNOTACJĘ
+    @DocumentId
     private String documentId; // Nazwa pola może być dowolna, np. id, documentId
     private String title;
     private String description;

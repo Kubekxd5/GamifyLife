@@ -156,6 +156,14 @@ public class CreateAchievementActivity extends BaseActivity {
         iconMap.put(getString(R.string.icon_name_sport), "ic_achievement_sport");
         iconMap.put(getString(R.string.icon_name_code), "ic_achievement_code");
         iconMap.put(getString(R.string.icon_name_default), "ic_achievement_default");
+        iconMap.put(getString(R.string.icon_name_finance), "ic_achievement_finance");
+        iconMap.put(getString(R.string.icon_name_health), "ic_achievement_health");
+        iconMap.put(getString(R.string.icon_name_hobby), "ic_achievement_hobby");
+        iconMap.put(getString(R.string.icon_name_work), "ic_achievement_work");
+        iconMap.put(getString(R.string.icon_name_study), "ic_achievement_study");
+        iconMap.put(getString(R.string.icon_name_gaming), "ic_achievement_game");
+
+
 
         List<String> displayNames = new ArrayList<>(iconMap.keySet());
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,

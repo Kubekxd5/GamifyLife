@@ -1,4 +1,4 @@
-package com.example.gamifylife.ui.home; // Lub odpowiedni pakiet
+package com.example.gamifylife;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
