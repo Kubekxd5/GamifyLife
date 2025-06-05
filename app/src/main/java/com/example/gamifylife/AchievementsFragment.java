@@ -65,13 +65,13 @@ public class AchievementsFragment extends Fragment {
 
     private FloatingActionButton fabAddAchievement;
     private RecyclerView recyclerViewAchievements;
-    private TextView textViewEmpty;
+    TextView textViewEmpty;
     private CalendarView calendarView;
 
-    private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
-    private AchievementAdapter achievementAdapter;
-    private List<Achievement> achievementList;
+    FirebaseFirestore db;
+    FirebaseAuth mAuth;
+    AchievementAdapter achievementAdapter;
+    List<Achievement> achievementList;
 
     private Date selectedDate;
 
@@ -339,29 +339,37 @@ public class AchievementsFragment extends Fragment {
         }
     }
 
-    private void loadAchievementsForDate(Date date) {
+    // W AchievementsFragment.java
+    public void loadAchievementsForDate(Date date) {
+        Log.d(TAG, "loadAchievementsForDate called with date: " + (date != null ? date.toString() : "null"));
         FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (achievementList == null) {
+            achievementList = new ArrayList<>();
+        }
+
         if (currentUser == null) {
+            Log.d(TAG, "User is null. Updating UI for logged out state.");
+            achievementList.clear(); // Czyść, bo nie będzie danych
             if (textViewEmpty != null) {
                 textViewEmpty.setVisibility(View.VISIBLE);
-                textViewEmpty.setText(getString(R.string.please_log_in));
+                textViewEmpty.setText((isAdded() && getContext() != null) ? getString(R.string.please_log_in) : null);
             }
-            if (achievementList != null) achievementList.clear();
-            if (achievementAdapter != null) achievementAdapter.notifyDataSetChanged();
+            if (achievementAdapter != null) {
+                achievementAdapter.notifyDataSetChanged();
+            }
             return;
         }
 
-        Calendar calStart = Calendar.getInstance();
-        calStart.setTime(date);
+        Calendar calStart = Calendar.getInstance(); calStart.setTime(date);
         calStart.set(Calendar.HOUR_OF_DAY, 0); calStart.set(Calendar.MINUTE, 0); calStart.set(Calendar.SECOND, 0); calStart.set(Calendar.MILLISECOND, 0);
         Date dayStart = calStart.getTime();
 
-        Calendar calEnd = Calendar.getInstance();
-        calEnd.setTime(date);
+        Calendar calEnd = Calendar.getInstance(); calEnd.setTime(date);
         calEnd.set(Calendar.HOUR_OF_DAY, 23); calEnd.set(Calendar.MINUTE, 59); calEnd.set(Calendar.SECOND, 59); calEnd.set(Calendar.MILLISECOND, 999);
         Date dayEnd = calEnd.getTime();
 
-        Log.d(TAG, "Loading achievements for date range: " + dayStart + " to " + dayEnd);
+        Log.d(TAG, "Loading achievements for user: " + currentUser.getUid() + " for date range: " + dayStart + " to " + dayEnd);
 
         db.collection("users").document(currentUser.getUid()).collection("achievements")
                 .whereGreaterThanOrEqualTo("targetDate", dayStart)
@@ -369,49 +377,54 @@ public class AchievementsFragment extends Fragment {
                 .orderBy("createdAt", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(task -> {
-            if (!isAdded() || getContext() == null) {
-                Log.w(TAG, "loadAchievements: Fragment not attached or context null, aborting update.");
-                return;
-            }
-            if (task.isSuccessful() && task.getResult() != null) {
-                achievementList.clear();
-                if (task.getResult().isEmpty()) {
-                    Log.d(TAG, "No achievements found for this date.");
-                    textViewEmpty.setText(getString(R.string.no_achievements_for_date));
-                    textViewEmpty.setVisibility(View.VISIBLE);
-                } else {
-                    textViewEmpty.setVisibility(View.GONE);
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        try {
-                            Achievement achievement = document.toObject(Achievement.class); // Spróbuj zdeserializować
+                    if (!isAdded() || getContext() == null) {
+                        Log.w(TAG, "Fragment not attached or context is null after Firestore call. Aborting UI update.");
+                        return;
+                    }
 
-                            // ----- KLUCZOWA ZMIANA/SPRAWDZENIE -----
-                            if (achievement.getDocumentId() == null) { // Jeśli @DocumentId nie zadziałało
-                                Log.w(TAG, "@@DocumentId FAILED for document: " + document.getId() + ". Setting ID manually.");
-                                achievement.setDocumentId(document.getId()); // Ustaw ID ręcznie
-                            } else {
-                                Log.d(TAG, "@@DocumentId WORKED for document: " + document.getId() + ". ID from model: " + achievement.getDocumentId());
+                    achievementList.clear(); // Czyść listę ZAWSZE przed jej potencjalnym wypełnieniem lub pokazaniem błędu
+
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        Log.d(TAG, "Firestore query successful. Documents found: " + task.getResult().size());
+                        if (task.getResult().isEmpty()) {
+                            Log.d(TAG, "No achievements found for this date.");
+                            if (textViewEmpty != null) {
+                                textViewEmpty.setText(getString(R.string.no_achievements_for_date));
+                                textViewEmpty.setVisibility(View.VISIBLE);
                             }
-                            // ----- KONIEC KLUCZOWEJ ZMIANY -----
-
-                            achievementList.add(achievement);
-                            Log.d(TAG, "Fetched and processed: " + achievement.getTitle() +
-                                    " (ID: " + achievement.getDocumentId() +
-                                    ") targetDate: " + achievement.getTargetDate() +
-                                    " completed: " + achievement.isCompleted() +
-                                    " XP: " + achievement.getXpValue());
-
-                        } catch (Exception e) { // Złap potencjalne błędy deserializacji
-                            Log.e(TAG, "Error converting document to Achievement object: " + document.getId(), e);
+                        } else {
+                            if (textViewEmpty != null) textViewEmpty.setVisibility(View.GONE);
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                try {
+                                    Achievement achievement = document.toObject(Achievement.class);
+                                    if (achievement != null) {
+                                        if (achievement.getDocumentId() == null) { // Podwójne sprawdzenie
+                                            achievement.setDocumentId(document.getId());
+                                        }
+                                        achievementList.add(achievement);
+                                    }
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Error converting document to Achievement object: " + document.getId(), e);
+                                }
+                            }
+                            Log.d(TAG, "Populated achievementList with " + achievementList.size() + " items.");
+                        }
+                    } else { // Błąd Firestore
+                        Log.e(TAG, "Error getting documents from Firestore: ", task.getException());
+                        // Lista została już wyczyszczona na początku addOnCompleteListener
+                        if (textViewEmpty != null) {
+                            textViewEmpty.setText(getString(R.string.error_loading_achievements));
+                            textViewEmpty.setVisibility(View.VISIBLE);
                         }
                     }
-                }
-                achievementAdapter.notifyDataSetChanged();
-            } else {
-                Log.e(TAG, "Error getting documents: ", task.getException());
-                // ... reszta obsługi błędu ...
-            }
-        });
+
+                    if (achievementAdapter != null) {
+                        achievementAdapter.notifyDataSetChanged();
+                        Log.d(TAG, "Adapter notified of data set change (end of onComplete).");
+                    } else {
+                        Log.w(TAG, "achievementAdapter is null, cannot notify (end of onComplete).");
+                    }
+                });
     }
 
     private void completeAchievementWithProfileUpdate(final Achievement achievementToComplete) {

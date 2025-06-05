@@ -113,7 +113,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadUserProfile() {
-        // ... (bez zmian)
         if (currentUser != null && db != null) {
             if (progressBarHome != null) progressBarHome.setVisibility(View.VISIBLE);
 

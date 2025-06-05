@@ -25,6 +25,7 @@ glideCompiler = "4.16.0"
 glide = "4.16.0"
 mpandroidchart = "v3.1.0" # Najnowsza stabilna wersja, sprawdź na GitHub
 mockitoCore = "5.11.0"
+mockitoInline = "5.2.0"
 
 [libraries]
 # Glide
@@ -36,6 +37,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockitoCore" }
+mockito-inline = { group = "org.mockito", name = "mockito-inline", version.ref = "mockitoInline" }
 
 # AndroidX
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }

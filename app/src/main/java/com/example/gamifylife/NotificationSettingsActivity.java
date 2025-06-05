@@ -49,21 +49,22 @@ public class NotificationSettingsActivity extends BaseActivity {
     public static final String PREF_NOTIFICATION_SOUND_URI = "pref_notification_sound_uri";
     public static final String PREF_NOTIFICATION_VIBRATE = "pref_notification_vibrate";
 
-    private MaterialSwitch switchEnableNotifications;
+    MaterialSwitch switchEnableNotifications;
     private LinearLayout layoutNotificationTime;
-    private TextView textViewNotificationTimeValue;
+    TextView textViewNotificationTimeValue;
     private Button buttonSaveSettings;
     private LinearLayout layoutNotificationSound;
-    private TextView textViewNotificationSoundValue;
-    private MaterialSwitch switchNotificationVibrate;
+    TextView textViewNotificationSoundValue;
+    MaterialSwitch switchNotificationVibrate;
     private LinearLayout actualLayoutCheckboxesDays;
 
     private CheckBox cbSun, cbMon, cbTue, cbWed, cbThu, cbFri, cbSat; // Zmieniona kolejność dla łatwiejszego mapowania
-    private CheckBox[] dayCheckBoxes;
+    CheckBox[] dayCheckBoxes;
 
-    private Uri selectedSoundUri;
-    private SharedPreferences prefs;
-    private int selectedHour, selectedMinute;
+    Uri selectedSoundUri;
+    SharedPreferences prefs;
+    int selectedHour;
+    int selectedMinute;
 
     private ActivityResultLauncher<String> requestPostNotificationsPermissionLauncher;
     private ActivityResultLauncher<Intent> requestExactAlarmSettingsLauncher;
@@ -176,7 +177,7 @@ public class NotificationSettingsActivity extends BaseActivity {
     }
 
     // Dodano parametr `isSavingExplicitly`, aby odróżnić automatyczne wywołania od kliknięcia "Save"
-    private void savePreferencesAndAttemptSchedule(boolean isSavingExplicitly) {
+    void savePreferencesAndAttemptSchedule(boolean isSavingExplicitly) {
         Log.d(TAG, "savePreferencesAndAttemptSchedule called. isSavingExplicitly: " + isSavingExplicitly);
         SharedPreferences.Editor editor = prefs.edit();
         boolean intendedEnableState = switchEnableNotifications.isChecked();
@@ -304,7 +305,7 @@ public class NotificationSettingsActivity extends BaseActivity {
         }
     }
 
-    private void loadSettings() {
+    void loadSettings() {
         Log.d(TAG, "loadSettings started");
         switchEnableNotifications.setChecked(prefs.getBoolean(PREF_NOTIFICATIONS_ENABLED, false));
         selectedHour = prefs.getInt(PREF_NOTIFICATION_HOUR, 9);

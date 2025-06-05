@@ -55,6 +55,7 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline) // Dodaj to
 
     // Glide (ładowanie obrazów)
     implementation(libs.glide)

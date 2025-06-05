@@ -28,14 +28,17 @@ import java.util.Random;
 
 public class LoginActivity extends BaseActivity {
 
-    private EditText editTextEmail, editTextPassword;
+    EditText editTextEmail;
+    EditText editTextPassword;
     private Button buttonLogin;
     private TextView textViewGoToRegister, textViewForgotPassword;
-    private ProgressBar progressBar;
-    private FirebaseAuth mAuth;
-    private EditText editTextCaptchaAnswer;
-    private TextView textViewCaptchaQuestion;
-    private int captchaNum1, captchaNum2, captchaExpectedAnswer;
+    ProgressBar progressBar;
+    FirebaseAuth mAuth;
+    EditText editTextCaptchaAnswer;
+    TextView textViewCaptchaQuestion;
+    int captchaNum1;
+    int captchaNum2;
+    int captchaExpectedAnswer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +98,7 @@ public class LoginActivity extends BaseActivity {
         editTextCaptchaAnswer.setText(""); // Clear previous answer
     }
 
-    private boolean isCaptchaValid() {
+    boolean isCaptchaValid() {
         String answerStr = editTextCaptchaAnswer.getText().toString().trim();
         if (TextUtils.isEmpty(answerStr)) {
             return false;
@@ -108,7 +111,7 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    private void loginUser() {
+    void loginUser() {
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
 
